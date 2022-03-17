@@ -1,4 +1,0 @@
-SECTIONS {
-  /DISCARD/ : { *(.interp) }
-}
-INSERT BEFORE .text;
