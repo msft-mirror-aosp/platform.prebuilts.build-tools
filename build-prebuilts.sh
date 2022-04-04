@@ -96,6 +96,7 @@ EOF
         hidl-lint
         m4
         make
+        merge_zips
         ninja
         one-true-awk
         openssl
@@ -105,6 +106,7 @@ EOF
         py3-launcher-autorun64
         runextractor
         soong_zip
+        symbol_inject
         toybox
         xz
         zip2zip
