@@ -85,6 +85,7 @@ EOF
         bison
         bloaty
         bpfmt
+        brotli
         bssl_inject_hash
         bzip2
         ckati
@@ -105,6 +106,7 @@ EOF
         py3-launcher64
         py3-launcher-autorun64
         runextractor
+        rust_extractor
         soong_zip
         symbol_inject
         toybox
