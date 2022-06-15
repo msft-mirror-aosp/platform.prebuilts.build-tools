@@ -3,7 +3,7 @@
 <!--
     xml2html.xsl - transform Bison XML Report into XHTML.
 
-    Copyright (C) 2007-2015, 2018-2021 Free Software Foundation, Inc.
+    Copyright (C) 2007-2015, 2018-2019 Free Software Foundation, Inc.
 
     This file is part of Bison, the GNU Compiler Compiler.
 
@@ -18,7 +18,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     Written by Wojciech Polak <polak@gnu.org>.
   -->
@@ -26,7 +26,7 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns="http://www.w3.org/1999/xhtml"
-  xmlns:bison="https://www.gnu.org/software/bison/">
+  xmlns:bison="http://www.gnu.org/software/bison/">
 
 <xsl:import href="bison.xsl"/>
 
@@ -75,7 +75,7 @@
       ol.lower-alpha {
         list-style-type: lower-alpha;
       }
-      .dot {
+      .point {
         color: #cc0000;
       }
       #footer {
@@ -88,7 +88,7 @@
       <xsl:apply-templates select="bison-xml-report"/>
       <xsl:text>&#10;&#10;</xsl:text>
       <div id="footer"><hr />This document was generated using
-      <a href="https://www.gnu.org/software/bison/" title="GNU Bison">
+      <a href="http://www.gnu.org/software/bison/" title="GNU Bison">
       GNU Bison <xsl:value-of select="/bison-xml-report/@version"/></a>
       XML Automaton Report.<br />
       <!-- default copying notice -->
@@ -227,7 +227,6 @@
   <xsl:text>&#10;</xsl:text>
   <p class="pre">
     <xsl:call-template name="style-rule-set">
-      <xsl:with-param name="anchor" select="'true'" />
       <xsl:with-param
         name="rule-set" select="rules/rule[@usefulness!='useless-in-grammar']"
       />
@@ -239,11 +238,9 @@
 </xsl:template>
 
 <xsl:template name="style-rule-set">
-  <xsl:param name="anchor"/>
   <xsl:param name="rule-set"/>
   <xsl:for-each select="$rule-set">
     <xsl:apply-templates select=".">
-      <xsl:with-param name="anchor" select="$anchor"/>
       <xsl:with-param name="pad" select="'3'"/>
       <xsl:with-param name="prev-lhs">
         <xsl:if test="position()>1">
@@ -309,10 +306,9 @@
     <xsl:text> Terminals, with rules where they appear</xsl:text>
   </h3>
   <xsl:text>&#10;&#10;</xsl:text>
-  <ul>
-    <xsl:text>&#10;</xsl:text>
+  <p class="pre">
     <xsl:apply-templates select="terminal"/>
-  </ul>
+  </p>
   <xsl:text>&#10;&#10;</xsl:text>
 </xsl:template>
 
@@ -322,64 +318,41 @@
     <xsl:text> Nonterminals, with rules where they appear</xsl:text>
   </h3>
   <xsl:text>&#10;&#10;</xsl:text>
-  <ul>
-    <xsl:text>&#10;</xsl:text>
+  <p class="pre">
     <xsl:apply-templates
       select="nonterminal[@usefulness!='useless-in-grammar']"
     />
-  </ul>
+  </p>
 </xsl:template>
 
 <xsl:template match="terminal">
-  <xsl:text>  </xsl:text>
-  <li>
-    <b><xsl:value-of select="@name"/></b>
-    <xsl:if test="string-length(@type) != 0">
-      <xsl:value-of select="concat(' &lt;', @type, '&gt;')"/>
-    </xsl:if>
-    <xsl:value-of select="concat(' (', @token-number, ')')"/>
-    <xsl:for-each select="key('bison:ruleByRhs', @name)">
-      <xsl:apply-templates select="." mode="number-link"/>
-    </xsl:for-each>
-  </li>
+  <b><xsl:value-of select="@name"/></b>
+  <xsl:value-of select="concat(' (', @token-number, ')')"/>
+  <xsl:for-each select="key('bison:ruleByRhs', @name)">
+    <xsl:apply-templates select="." mode="number-link"/>
+  </xsl:for-each>
   <xsl:text>&#10;</xsl:text>
 </xsl:template>
 
 <xsl:template match="nonterminal">
-  <xsl:text>  </xsl:text>
-  <li>
-    <b><xsl:value-of select="@name"/></b>
-    <xsl:if test="string-length(@type) != 0">
-      <xsl:value-of select="concat(' &lt;', @type, '&gt;')"/>
+  <b><xsl:value-of select="@name"/></b>
+  <xsl:value-of select="concat(' (', @symbol-number, ')')"/>
+  <xsl:text>&#10;    </xsl:text>
+  <xsl:if test="key('bison:ruleByLhs', @name)">
+    <xsl:text>on left:</xsl:text>
+    <xsl:for-each select="key('bison:ruleByLhs', @name)">
+      <xsl:apply-templates select="." mode="number-link"/>
+    </xsl:for-each>
+  </xsl:if>
+  <xsl:if test="key('bison:ruleByRhs', @name)">
+    <xsl:if test="key('bison:ruleByLhs', @name)">
+      <xsl:text>&#10;    </xsl:text>
     </xsl:if>
-    <xsl:value-of select="concat(' (', @symbol-number, ')')"/>
-    <xsl:text>&#10;    </xsl:text>
-    <ul>
-      <xsl:text>&#10;</xsl:text>
-      <xsl:if test="key('bison:ruleByLhs', @name)">
-        <xsl:text>      </xsl:text>
-        <li>
-          <xsl:text>on left:</xsl:text>
-          <xsl:for-each select="key('bison:ruleByLhs', @name)">
-            <xsl:apply-templates select="." mode="number-link"/>
-          </xsl:for-each>
-        </li>
-        <xsl:text>&#10;</xsl:text>
-      </xsl:if>
-      <xsl:if test="key('bison:ruleByRhs', @name)">
-        <xsl:text>      </xsl:text>
-        <li>
-          <xsl:text>on right:</xsl:text>
-          <xsl:for-each select="key('bison:ruleByRhs', @name)">
-            <xsl:apply-templates select="." mode="number-link"/>
-          </xsl:for-each>
-        </li>
-        <xsl:text>&#10;</xsl:text>
-      </xsl:if>
-    <xsl:text>    </xsl:text>
-    </ul>
-    <xsl:text>&#10;  </xsl:text>
-  </li>
+    <xsl:text>on right:</xsl:text>
+    <xsl:for-each select="key('bison:ruleByRhs', @name)">
+      <xsl:apply-templates select="." mode="number-link"/>
+    </xsl:for-each>
+  </xsl:if>
   <xsl:text>&#10;</xsl:text>
 </xsl:template>
 
@@ -412,7 +385,7 @@
         <xsl:value-of select="concat('state_', @number)"/>
       </xsl:attribute>
     </a>
-    <xsl:text>State </xsl:text>
+    <xsl:text>state </xsl:text>
     <xsl:value-of select="@number"/>
   </h3>
   <xsl:text>&#10;&#10;</xsl:text>
@@ -484,44 +457,35 @@
     <xsl:with-param name="prev-lhs"
       select="key('bison:ruleByNumber', $prev-rule-number)/lhs[text()]"
    />
-    <xsl:with-param name="dot" select="@dot"/>
+    <xsl:with-param name="point" select="@point"/>
     <xsl:with-param name="lookaheads">
       <xsl:apply-templates select="lookaheads"/>
     </xsl:with-param>
   </xsl:apply-templates>
 </xsl:template>
 
-<!--
-anchor = 'true': define as an <a> anchor.
-itemset = 'true': show the items.
- -->
 <xsl:template match="rule">
-  <xsl:param name="anchor"/>
   <xsl:param name="itemset"/>
   <xsl:param name="pad"/>
   <xsl:param name="prev-lhs"/>
-  <xsl:param name="dot"/>
+  <xsl:param name="point"/>
   <xsl:param name="lookaheads"/>
 
   <xsl:if test="$itemset != 'true' and not($prev-lhs = lhs[text()])">
     <xsl:text>&#10;</xsl:text>
   </xsl:if>
 
+  <xsl:if test="$itemset != 'true'">
+    <a>
+      <xsl:attribute name="name">
+        <xsl:value-of select="concat('rule_', @number)"/>
+      </xsl:attribute>
+    </a>
+  </xsl:if>
   <xsl:text>  </xsl:text>
 
   <xsl:choose>
-    <xsl:when test="$anchor = 'true'">
-      <a>
-        <xsl:attribute name="name">
-          <xsl:value-of select="concat('rule_', @number)"/>
-        </xsl:attribute>
-        <xsl:call-template name="lpad">
-          <xsl:with-param name="str" select="string(@number)"/>
-          <xsl:with-param name="pad" select="number($pad)"/>
-        </xsl:call-template>
-      </a>
-    </xsl:when>
-    <xsl:otherwise>
+    <xsl:when test="$itemset = 'true'">
       <a>
         <xsl:attribute name="href">
           <xsl:value-of select="concat('#rule_', @number)"/>
@@ -531,13 +495,25 @@ itemset = 'true': show the items.
           <xsl:with-param name="pad" select="number($pad)"/>
         </xsl:call-template>
       </a>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="lpad">
+        <xsl:with-param name="str" select="string(@number)"/>
+        <xsl:with-param name="pad" select="number($pad)"/>
+      </xsl:call-template>
     </xsl:otherwise>
   </xsl:choose>
   <xsl:text> </xsl:text>
 
   <!-- LHS -->
   <xsl:choose>
-    <xsl:when test="$prev-lhs = lhs[text()]">
+    <xsl:when test="$itemset != 'true' and $prev-lhs = lhs[text()]">
+      <xsl:call-template name="lpad">
+        <xsl:with-param name="str" select="'|'"/>
+        <xsl:with-param name="pad" select="number(string-length(lhs[text()])) + 2"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="$itemset = 'true' and $prev-lhs = lhs[text()]">
       <xsl:call-template name="lpad">
         <xsl:with-param name="str" select="'|'"/>
         <xsl:with-param name="pad" select="number(string-length(lhs[text()])) + 2"/>
@@ -553,14 +529,14 @@ itemset = 'true': show the items.
 
   <!-- RHS -->
   <xsl:for-each select="rhs/*">
-    <xsl:if test="position() = $dot + 1">
+    <xsl:if test="position() = $point + 1">
       <xsl:text> </xsl:text>
-      <span class="dot">&#x2022;</span>
+      <span class="point">.</span>
     </xsl:if>
     <xsl:apply-templates select="."/>
-    <xsl:if test="position() = last() and position() = $dot">
+    <xsl:if test="position() = last() and position() = $point">
       <xsl:text> </xsl:text>
-      <span class="dot">&#x2022;</span>
+      <span class="point">.</span>
     </xsl:if>
   </xsl:for-each>
   <xsl:if test="$lookaheads">
