@@ -62,6 +62,12 @@ if [[ ${use_musl} = "true" ]]; then
     "CrossHostSecondaryArch": "arm",
 EOF
     )
+elif [[ ${OS} = darwin ]]; then
+    cross_compile=$(cat <<EOF
+    "CrossHost": "darwin",
+    "CrossHostArch": "arm64",
+EOF
+    )
 fi
 
 # Use toybox and other prebuilts even outside of the build (test running, go, etc)
@@ -112,7 +118,6 @@ EOF
         ninja
         one-true-awk
         openssl
-        py2-cmd
         py3-cmd
         py3-launcher64
         py3-launcher-autorun64
@@ -145,8 +150,9 @@ EOF
     SOONG_JAVA_LIBRARIES=(
         desugar.jar
         dx.jar
-        turbine.jar
         javac_extractor.jar
+        ktfmt.jar
+        turbine.jar
     )
     SOONG_JAVA_WRAPPERS=(
         dx
@@ -155,6 +161,7 @@ EOF
         SOONG_BINARIES+=(
             create_minidebuginfo
             nsjail
+            py2-cmd
         )
     fi
 
