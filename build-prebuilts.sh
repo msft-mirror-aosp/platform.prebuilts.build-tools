@@ -54,6 +54,22 @@ if [[ ${OS} = linux ]]; then
     secondary_arch="\"HostSecondaryArch\":\"x86\","
 fi
 
+cross_compile=""
+if [[ ${use_musl} = "true" ]]; then
+    cross_compile=$(cat <<EOF
+    "CrossHost": "linux_musl",
+    "CrossHostArch": "arm64",
+    "CrossHostSecondaryArch": "arm",
+EOF
+    )
+elif [[ ${OS} = darwin ]]; then
+    cross_compile=$(cat <<EOF
+    "CrossHost": "darwin",
+    "CrossHostArch": "arm64",
+EOF
+    )
+fi
+
 # Use toybox and other prebuilts even outside of the build (test running, go, etc)
 export PATH=${TOP}/prebuilts/build-tools/path/${OS}-x86:$PATH
 
@@ -68,6 +84,7 @@ if [ -n "${build_soong}" ]; then
     "Allow_missing_dependencies": true,
     "HostArch":"x86_64",
     ${secondary_arch}
+    ${cross_compile}
     "HostMusl": $use_musl,
     "VendorVars": {
         "cpython3": {
@@ -85,6 +102,7 @@ EOF
         bison
         bloaty
         bpfmt
+        brotli
         bssl_inject_hash
         bzip2
         ckati
@@ -100,11 +118,11 @@ EOF
         ninja
         one-true-awk
         openssl
-        py2-cmd
         py3-cmd
         py3-launcher64
         py3-launcher-autorun64
         runextractor
+        rust_extractor
         soong_zip
         symbol_inject
         toybox
@@ -132,8 +150,9 @@ EOF
     SOONG_JAVA_LIBRARIES=(
         desugar.jar
         dx.jar
-        turbine.jar
         javac_extractor.jar
+        ktfmt.jar
+        turbine.jar
     )
     SOONG_JAVA_WRAPPERS=(
         dx
@@ -142,6 +161,7 @@ EOF
         SOONG_BINARIES+=(
             create_minidebuginfo
             nsjail
+            py2-cmd
         )
     fi
 
@@ -155,10 +175,15 @@ EOF
 
     musl_sysroot32=""
     musl_sysroot64=""
+    musl_arm_sysroot=""
+    musl_arm64_sysroot=""
     if [[ ${use_musl} = "true" ]]; then
         binaries="${binaries} ${SOONG_MUSL_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
         musl_sysroot32="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_x86/gen/libc_musl_sysroot.zip"
         musl_sysroot64="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_x86_64/gen/libc_musl_sysroot.zip"
+
+        musl_arm_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_arm/gen/libc_musl_sysroot.zip"
+        musl_arm64_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_arm64/gen/libc_musl_sysroot.zip"
     fi
 
     # Build everything
@@ -169,6 +194,8 @@ EOF
         ${py3_stdlib_zip} \
         ${musl_sysroot32} \
         ${musl_sysroot64} \
+        ${musl_arm_sysroot} \
+        ${musl_arm64_sysroot} \
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
         ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test \
         soong_docs
@@ -200,6 +227,8 @@ EOF
     if [[ ${use_musl} = "true" ]]; then
         cp ${musl_sysroot64} ${SOONG_OUT}/musl-sysroot64.zip
         cp ${musl_sysroot32} ${SOONG_OUT}/musl-sysroot32.zip
+        cp ${musl_arm_sysroot} ${SOONG_OUT}/musl-sysroot-arm-linux-musleabihf.zip
+        cp ${musl_arm64_sysroot} ${SOONG_OUT}/musl-sysroot-aarch64-linux-musl.zip
     fi
 
     if [[ $OS == "linux" ]]; then
@@ -287,6 +316,8 @@ if [ -n "${DIST_DIR}" ]; then
         if [ ${use_musl} = "true" ]; then
             cp ${SOONG_OUT}/musl-sysroot64.zip ${DIST_DIR}/
             cp ${SOONG_OUT}/musl-sysroot32.zip ${DIST_DIR}/
+            cp ${SOONG_OUT}/musl-sysroot-arm-linux-musleabihf.zip ${DIST_DIR}/
+            cp ${SOONG_OUT}/musl-sysroot-aarch64-linux-musl.zip ${DIST_DIR}/
         fi
     fi
     if [ -n "${build_go}" ]; then
