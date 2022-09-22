@@ -57,7 +57,7 @@ fetch_artifact linux_musl musl-sysroot-arm-unknown-linux-musleabihf.zip "${tmpdi
 function unzip_to() {
     rm -rf "$1"
     mkdir "$1"
-    unzip -q -d "$1" "$2"
+    unzip -q -DD -d "$1" "$2"
 }
 
 unzip_to linux-x86 "${tmpdir}/linux.zip"
@@ -67,7 +67,7 @@ unzip_to linux_musl-x86 "${tmpdir}/linux_musl.zip"
 unzip_to sysroots/x86_64-unknown-linux-musl "${tmpdir}/musl-sysroot-x86_64-unknown-linux-musl.zip"
 unzip_to sysroots/i686-unknown-linux-musl "${tmpdir}/musl-sysroot-i686-unknown-linux-musl.zip"
 unzip_to sysroots/aarch64-unknown-linux-musl "${tmpdir}/musl-sysroot-aarch64-unknown-linux-musl.zip"
-unzip_to sysroots/arm-unknown-linux-musleabihf "${tmpdir}/musl-sysroot-arm-linux-musleabihf.zip"
+unzip_to sysroots/arm-unknown-linux-musleabihf "${tmpdir}/musl-sysroot-arm-unknown-linux-musleabihf.zip"
 
 cp -f "${tmpdir}/manifest.xml" manifest.xml
 
