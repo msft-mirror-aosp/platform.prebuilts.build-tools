@@ -189,7 +189,7 @@ EOF
     fi
 
     # Build everything
-    build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
+    build/soong/soong_ui.bash --make-mode --soong-only --skip-config BUILD_BROKEN_DISABLE_BAZEL=true ${skip_soong_tests} \
         ${binaries} \
         ${wrappers} \
         ${jars} \
@@ -256,7 +256,7 @@ EOF
         rm -rf ${SOONG_HOST_OUT}
 
         # Build everything with ASAN
-        build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
+        build/soong/soong_ui.bash --make-mode --soong-only --skip-config BUILD_BROKEN_DISABLE_BAZEL=true ${skip_soong_tests} \
             ${asan_binaries} \
             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
             ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
@@ -297,6 +297,7 @@ if [ -n "${build_go}" ]; then
         export GOROOT_BOOTSTRAP=${TOP}/prebuilts/go/${OS}-x86
         export GOROOT_FINAL=./prebuilts/go/${OS}-x86
         export GO_TEST_TIMEOUT_SCALE=100
+        export GODEBUG=installgoroot=all
         ./make.bash
         rm -rf ../pkg/bootstrap
         rm -rf ../pkg/obj
