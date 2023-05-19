@@ -67,3 +67,26 @@ sh_binary(
         "//conditions:default": ["@platforms//:incompatible"],
     }),
 )
+
+sh_binary(
+    name = "bison",
+    srcs = select({
+        "//build/bazel/platforms/os:darwin": ["darwin-x86/bin/bison"],
+        "//build/bazel/platforms/os:linux": ["linux-x86/bin/bison"],
+        "//build/bazel/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/bison"],
+    }),
+    target_compatible_with = select({
+        "//build/bazel/platforms/os:darwin": [],
+        "//build/bazel/platforms/os:linux": [],
+        "//build/bazel/platforms/os_arch:linux_musl_x86": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+)
+
+# Additional runfiles required by bison
+filegroup(
+    name = "bison.runfiles",
+    srcs = glob([
+        "common/bison/**",
+    ]),
+)
