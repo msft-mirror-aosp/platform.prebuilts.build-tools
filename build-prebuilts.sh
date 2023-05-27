@@ -125,7 +125,6 @@ EOF
         brotli
         bzip2
         ckati
-        ckati_stamp_dump
         flex
         gavinhoward-bc
         hidl-gen
