@@ -8,6 +8,7 @@ package(default_visibility = ["//visibility:public"])
         "common/**",
         "%s/bin/*" % platform,
         "%s/lib64/*" % platform,
+        "path/%s/*" % platform,
     ]),
 ) for platform in ("linux-x86", "darwin")]
 
@@ -35,4 +36,34 @@ toolchain(
     name = "py_toolchain",
     toolchain = ":py_runtime_pair",
     toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+)
+
+sh_binary(
+    name = "flex",
+    srcs = select({
+        "//build/bazel/platforms/os:darwin": ["darwin-x86/bin/flex"],
+        "//build/bazel/platforms/os:linux": ["linux-x86/bin/flex"],
+        "//build/bazel/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/flex"],
+    }),
+    target_compatible_with = select({
+        "//build/bazel/platforms/os:darwin": [],
+        "//build/bazel/platforms/os:linux": [],
+        "//build/bazel/platforms/os_arch:linux_musl_x86": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+)
+
+sh_binary(
+    name = "m4",
+    srcs = select({
+        "//build/bazel/platforms/os:darwin": ["darwin-x86/bin/m4"],
+        "//build/bazel/platforms/os:linux": ["linux-x86/bin/m4"],
+        "//build/bazel/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/m4"],
+    }),
+    target_compatible_with = select({
+        "//build/bazel/platforms/os:darwin": [],
+        "//build/bazel/platforms/os:linux": [],
+        "//build/bazel/platforms/os_arch:linux_musl_x86": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
 )
