@@ -104,17 +104,12 @@ EOF
         mv -f ${SOONG_OUT}/soong.variables.tmp ${SOONG_OUT}/soong.variables
     fi
     SOONG_GO_BINARIES=(
-        bazel_notice_gen
         bpfmt
-        bssl_inject_hash
-        extract_linker
         go_extractor
-        htmlnotice
         merge_zips
         soong_zip
         runextractor
         rust_extractor
-        symbol_inject
         zip2zip
     )
     SOONG_BINARIES=(
