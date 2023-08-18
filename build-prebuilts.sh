@@ -113,6 +113,7 @@ EOF
         zip2zip
     )
     SOONG_BINARIES=(
+        aconfig
         acp
         aidl
         bison
