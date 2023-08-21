@@ -266,7 +266,14 @@ cpython3_cc_prebuilt_binary {
 
 filegroup {
     name: "py3-stdlib-prebuilt-srcs",
-    visibility: ["//external/python/cpython3/Lib"],
+    visibility: ["//visibility:private"],
     srcs: ["common/py3-stdlib/**/*.py"],
     path: "common/py3-stdlib",
+}
+
+python_library_host {
+    name: "py3-stdlib-prebuilt",
+    is_internal: true,
+    pkg_path: "stdlib",
+    srcs: [":py3-stdlib-prebuilt-srcs"],
 }
