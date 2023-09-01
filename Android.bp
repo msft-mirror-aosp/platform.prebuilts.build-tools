@@ -274,6 +274,6 @@ filegroup {
 python_library_host {
     name: "py3-stdlib-prebuilt",
     is_internal: true,
-    pkg_path: "stdlib",
+    pkg_path: "python3.11",
     srcs: [":py3-stdlib-prebuilt-srcs"],
 }
