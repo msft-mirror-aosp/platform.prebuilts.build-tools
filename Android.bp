@@ -277,22 +277,3 @@ python_library_host {
     pkg_path: "python3.11",
     srcs: [":py3-stdlib-prebuilt-srcs"],
 }
-
-prebuilt_build_tool {
-    name: "rust_extractor",
-    enabled: false,
-    arch: {
-        x86_64: {
-            enabled: true,
-        },
-    },
-    target: {
-        darwin: {
-            src: "darwin-x86/bin/rust_extractor",
-        },
-        linux: {
-            src: "linux-x86/bin/rust_extractor",
-        },
-    },
-}
-
