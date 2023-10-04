@@ -104,20 +104,16 @@ EOF
         mv -f ${SOONG_OUT}/soong.variables.tmp ${SOONG_OUT}/soong.variables
     fi
     SOONG_GO_BINARIES=(
-        bazel_notice_gen
         bpfmt
-        bssl_inject_hash
-        extract_linker
         go_extractor
-        htmlnotice
         merge_zips
         soong_zip
         runextractor
         rust_extractor
-        symbol_inject
         zip2zip
     )
     SOONG_BINARIES=(
+        aconfig
         acp
         aidl
         bison
@@ -219,6 +215,7 @@ EOF
         ${musl_arm64_sysroot} \
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
         ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test \
+        ${SOONG_HOST_OUT}/nativetest64/par_test/par_test \
         soong_docs
 
     # Run ninja tests
@@ -226,6 +223,9 @@ EOF
 
     # Run ckati tests
     ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
+
+    # Run python par/py*-cmd tests
+    ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
 
     # Copy arch-specific binaries
     mkdir -p ${SOONG_OUT}/dist/bin
