@@ -83,6 +83,12 @@ sh_binary(
     }),
 )
 
+# TODO(b/304594734): Update this rule so soong_zip is platform independent.
+sh_binary(
+    name = "soong_zip",
+    srcs = [":linux-x86/bin/soong_zip"],
+)
+
 # Additional runfiles required by bison
 filegroup(
     name = "bison.runfiles",
