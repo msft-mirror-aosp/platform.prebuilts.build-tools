@@ -113,6 +113,7 @@ EOF
         zip2zip
     )
     SOONG_BINARIES=(
+        aconfig
         acp
         aidl
         bison
@@ -214,6 +215,7 @@ EOF
         ${musl_arm64_sysroot} \
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
         ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test \
+        ${SOONG_HOST_OUT}/nativetest64/par_test/par_test \
         soong_docs
 
     # Run ninja tests
@@ -221,6 +223,9 @@ EOF
 
     # Run ckati tests
     ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
+
+    # Run python par/py*-cmd tests
+    ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
 
     # Copy arch-specific binaries
     mkdir -p ${SOONG_OUT}/dist/bin
