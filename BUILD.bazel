@@ -83,10 +83,19 @@ sh_binary(
     }),
 )
 
-# TODO(b/304594734): Update this rule so soong_zip is platform independent.
 sh_binary(
     name = "soong_zip",
-    srcs = [":linux-x86/bin/soong_zip"],
+    srcs = select({
+        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/soong_zip"],
+        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/soong_zip"],
+        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/soong_zip"],
+    }),
+    target_compatible_with = select({
+        "//build/bazel_common_rules/platforms/os:darwin": [],
+        "//build/bazel_common_rules/platforms/os:linux": [],
+        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
 )
 
 # Additional runfiles required by bison
