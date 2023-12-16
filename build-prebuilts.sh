@@ -43,6 +43,7 @@ while getopts ":-:" opt; do
                 resume) clean= ;;
                 musl) use_musl=true ;;
                 skip-go) unset build_go ;;
+                skip-soong) unset build_soong ;;
                 skip-soong-tests) skip_soong_tests=--skip-soong-tests ;;
                 skip-asan) unset build_asan ;;
                 *) echo "Unknown option --${OPTARG}"; exit 1 ;;
@@ -319,6 +320,63 @@ EOF
         cd ${SOONG_OUT}/dist-common
         zip -qryX build-common-prebuilts.zip *
     )
+fi
+
+if [ -z "${skip_soong_tests}" ]; then
+    # Verify that go test and go build work on all the same projects that are parsed by
+    # build/soong/build_kzip.bash
+    declare -ar go_modules=(build/blueprint build/soong
+      build/make/tools/canoninja build/make/tools/compliance build/make/tools/rbcrun)
+    export GOROOT=${TOP}/prebuilts/go/${OS}-x86
+    export GOENV=off
+    export GOPROXY=off
+    abs_out_dir=$(cd ${OUT_DIR}; echo $(pwd))
+    export GOPATH=${abs_out_dir}/gopath
+    export GOCACHE=${abs_out_dir}/gocache
+    export GOMODCACHE=${abs_out_dir}/gomodcache
+    export TMPDIR=${abs_out_dir}/gotemp
+    mkdir -p ${TMPDIR}
+    ${GOROOT}/bin/go env
+
+    network_jail=""
+    if [[ ${OS} = linux ]]; then
+        # The go tools often try to fetch dependencies from the network,
+        # wrap them in an nsjail to prevent network access.
+        network_jail=${TOP}/prebuilts/build-tools/linux-x86/bin/nsjail
+        # Quiet
+        network_jail="${network_jail} -q"
+        # No timeout
+        network_jail="${network_jail} -t 0"
+        # Set working directory
+        network_jail="${network_jail} --cwd=\$PWD"
+        # Pass environment variables through
+        network_jail="${network_jail} -e"
+        # Allow read-only access to everything
+        network_jail="${network_jail} -R /"
+        # Allow write access to the out directory
+        network_jail="${network_jail} -B ${abs_out_dir}"
+        # Allow write access to the /tmp directory
+        network_jail="${network_jail} -B /tmp"
+        # Set high values, as network_jail uses low defaults.
+        network_jail="${network_jail} --rlimit_as soft"
+        network_jail="${network_jail} --rlimit_core soft"
+        network_jail="${network_jail} --rlimit_cpu soft"
+        network_jail="${network_jail} --rlimit_fsize soft"
+        network_jail="${network_jail} --rlimit_nofile soft"
+    fi
+
+    for dir in "${go_modules[@]}"; do
+        (cd "$dir";
+         eval ${network_jail} ${GOROOT}/bin/go build ./...
+         eval ${network_jail} ${GOROOT}/bin/go test ./...)
+    done
+    unset GOROOT
+    unset GOENV
+    unset GOPROXY
+    unset GOPATH
+    unset GOCACHE
+    unset GOMODCACHE
+    unset TMPDIR
 fi
 
 # Go
