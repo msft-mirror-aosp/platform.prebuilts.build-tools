@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef _LINUX_VHOST_H
 #define _LINUX_VHOST_H
 #include <linux/vhost_types.h>
@@ -74,4 +62,5 @@
 #define VHOST_VDPA_SET_GROUP_ASID _IOW(VHOST_VIRTIO, 0x7C, struct vhost_vring_state)
 #define VHOST_VDPA_SUSPEND _IO(VHOST_VIRTIO, 0x7D)
 #define VHOST_VDPA_RESUME _IO(VHOST_VIRTIO, 0x7E)
+#define VHOST_VDPA_GET_VRING_DESC_GROUP _IOWR(VHOST_VIRTIO, 0x7F, struct vhost_vring_state)
 #endif

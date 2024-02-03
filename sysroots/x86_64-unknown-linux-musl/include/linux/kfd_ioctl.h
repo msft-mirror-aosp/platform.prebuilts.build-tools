@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef KFD_IOCTL_H_INCLUDED
 #define KFD_IOCTL_H_INCLUDED
 #include <drm/drm.h>
@@ -280,6 +268,7 @@ struct kfd_ioctl_acquire_vm_args {
 #define KFD_IOC_ALLOC_MEM_FLAGS_AQL_QUEUE_MEM (1 << 27)
 #define KFD_IOC_ALLOC_MEM_FLAGS_COHERENT (1 << 26)
 #define KFD_IOC_ALLOC_MEM_FLAGS_UNCACHED (1 << 25)
+#define KFD_IOC_ALLOC_MEM_FLAGS_EXT_COHERENT (1 << 24)
 struct kfd_ioctl_alloc_memory_of_gpu_args {
   __u64 va_addr;
   __u64 size;
@@ -413,6 +402,7 @@ enum kfd_mmio_remap {
 #define KFD_IOCTL_SVM_FLAG_GPU_EXEC 0x00000010
 #define KFD_IOCTL_SVM_FLAG_GPU_READ_MOSTLY 0x00000020
 #define KFD_IOCTL_SVM_FLAG_GPU_ALWAYS_MAPPED 0x00000040
+#define KFD_IOCTL_SVM_FLAG_EXT_COHERENT 0x00000080
 enum kfd_ioctl_svm_op {
   KFD_IOCTL_SVM_OP_SET_ATTR,
   KFD_IOCTL_SVM_OP_GET_ATTR

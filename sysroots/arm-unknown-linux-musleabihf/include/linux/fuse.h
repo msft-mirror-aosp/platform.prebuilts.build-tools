@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef _LINUX_FUSE_H
 #define _LINUX_FUSE_H
 #include <stdint.h>
@@ -141,7 +129,8 @@ struct fuse_file_lock {
 #define FUSE_HAS_INODE_DAX (1ULL << 33)
 #define FUSE_CREATE_SUPP_GROUP (1ULL << 34)
 #define FUSE_HAS_EXPIRE_ONLY (1ULL << 35)
-#define FUSE_DIRECT_IO_RELAX (1ULL << 36)
+#define FUSE_DIRECT_IO_ALLOW_MMAP (1ULL << 36)
+#define FUSE_DIRECT_IO_RELAX FUSE_DIRECT_IO_ALLOW_MMAP
 #if FUSE_KERNEL_VERSION > 7 || FUSE_KERNEL_VERSION == 7 && FUSE_KERNEL_MINOR_VERSION >= 36
 #define FUSE_PASSTHROUGH (1ULL << 63)
 #else

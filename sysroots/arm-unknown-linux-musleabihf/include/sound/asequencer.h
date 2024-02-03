@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef _UAPI__SOUND_ASEQUENCER_H
 #define _UAPI__SOUND_ASEQUENCER_H
 #include <sound/asound.h>
@@ -129,7 +117,7 @@ struct snd_seq_ev_raw32 {
 struct snd_seq_ev_ext {
   unsigned int len;
   void * ptr;
-} __attribute__((packed));
+} __attribute__((__packed__));
 struct snd_seq_result {
   int event;
   int result;
@@ -163,7 +151,7 @@ struct snd_seq_ev_quote {
   struct snd_seq_addr origin;
   unsigned short value;
   struct snd_seq_event * event;
-} __attribute__((packed));
+} __attribute__((__packed__));
 union snd_seq_event_data {
   struct snd_seq_ev_note note;
   struct snd_seq_ev_ctrl control;

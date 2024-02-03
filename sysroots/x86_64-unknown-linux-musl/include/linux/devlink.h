@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef _UAPI_LINUX_DEVLINK_H_
 #define _UAPI_LINUX_DEVLINK_H_
 #include <linux/const.h>
@@ -181,7 +169,7 @@ enum {
   __DEVLINK_ATTR_STATS_MAX,
   DEVLINK_ATTR_STATS_MAX = __DEVLINK_ATTR_STATS_MAX - 1
 };
-enum {
+enum devlink_flash_overwrite {
   DEVLINK_FLASH_OVERWRITE_SETTINGS_BIT,
   DEVLINK_FLASH_OVERWRITE_IDENTIFIERS_BIT,
   __DEVLINK_FLASH_OVERWRITE_MAX_BIT,
@@ -476,6 +464,7 @@ enum devlink_port_function_attr {
   DEVLINK_PORT_FN_ATTR_STATE,
   DEVLINK_PORT_FN_ATTR_OPSTATE,
   DEVLINK_PORT_FN_ATTR_CAPS,
+  DEVLINK_PORT_FN_ATTR_DEVLINK,
   __DEVLINK_PORT_FUNCTION_ATTR_MAX,
   DEVLINK_PORT_FUNCTION_ATTR_MAX = __DEVLINK_PORT_FUNCTION_ATTR_MAX - 1
 };

@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef __LINUX_V4L2_CONTROLS_H
 #define __LINUX_V4L2_CONTROLS_H
 #include <linux/const.h>
@@ -122,6 +110,7 @@ enum v4l2_colorfx {
 #define V4L2_CID_USER_ISL7998X_BASE (V4L2_CID_USER_BASE + 0x1180)
 #define V4L2_CID_USER_DW100_BASE (V4L2_CID_USER_BASE + 0x1190)
 #define V4L2_CID_USER_ASPEED_BASE (V4L2_CID_USER_BASE + 0x11a0)
+#define V4L2_CID_USER_NPCM_BASE (V4L2_CID_USER_BASE + 0x11b0)
 #define V4L2_CID_CODEC_BASE (V4L2_CTRL_CLASS_CODEC | 0x900)
 #define V4L2_CID_CODEC_CLASS (V4L2_CTRL_CLASS_CODEC | 1)
 #define V4L2_CID_MPEG_STREAM_TYPE (V4L2_CID_CODEC_BASE + 0)

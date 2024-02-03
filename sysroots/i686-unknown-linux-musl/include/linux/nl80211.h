@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef __LINUX_NL80211_H
 #define __LINUX_NL80211_H
 #include <linux/types.h>
@@ -879,6 +867,7 @@ enum nl80211_frequency_attr {
   NL80211_FREQUENCY_ATTR_16MHZ,
   NL80211_FREQUENCY_ATTR_NO_320MHZ,
   NL80211_FREQUENCY_ATTR_NO_EHT,
+  NL80211_FREQUENCY_ATTR_PSD,
   __NL80211_FREQUENCY_ATTR_AFTER_LAST,
   NL80211_FREQUENCY_ATTR_MAX = __NL80211_FREQUENCY_ATTR_AFTER_LAST - 1
 };
@@ -915,6 +904,7 @@ enum nl80211_reg_rule_attr {
   NL80211_ATTR_POWER_RULE_MAX_ANT_GAIN,
   NL80211_ATTR_POWER_RULE_MAX_EIRP,
   NL80211_ATTR_DFS_CAC_TIME,
+  NL80211_ATTR_POWER_RULE_PSD,
   __NL80211_REG_RULE_ATTR_AFTER_LAST,
   NL80211_REG_RULE_ATTR_MAX = __NL80211_REG_RULE_ATTR_AFTER_LAST - 1
 };
@@ -949,6 +939,7 @@ enum nl80211_reg_rule_flags {
   NL80211_RRF_NO_HE = 1 << 17,
   NL80211_RRF_NO_320MHZ = 1 << 18,
   NL80211_RRF_NO_EHT = 1 << 19,
+  NL80211_RRF_PSD = 1 << 20,
 };
 #define NL80211_RRF_PASSIVE_SCAN NL80211_RRF_NO_IR
 #define NL80211_RRF_NO_IBSS NL80211_RRF_NO_IR
@@ -1554,6 +1545,8 @@ enum nl80211_ext_feature_index {
   NL80211_EXT_FEATURE_PUNCT,
   NL80211_EXT_FEATURE_SECURE_NAN,
   NL80211_EXT_FEATURE_AUTH_AND_DEAUTH_RANDOM_TA,
+  NL80211_EXT_FEATURE_OWE_OFFLOAD,
+  NL80211_EXT_FEATURE_OWE_OFFLOAD_AP,
   NUM_NL80211_EXT_FEATURES,
   MAX_NL80211_EXT_FEATURES = NUM_NL80211_EXT_FEATURES - 1
 };

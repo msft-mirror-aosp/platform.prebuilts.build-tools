@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef _LINUX_USERFAULTFD_H
 #define _LINUX_USERFAULTFD_H
 #include <linux/types.h>
@@ -23,7 +11,7 @@
 #define USERFAULTFD_IOC_NEW _IO(USERFAULTFD_IOC, 0x00)
 #define UFFD_API ((__u64) 0xAA)
 #define UFFD_API_REGISTER_MODES (UFFDIO_REGISTER_MODE_MISSING | UFFDIO_REGISTER_MODE_WP | UFFDIO_REGISTER_MODE_MINOR)
-#define UFFD_API_FEATURES (UFFD_FEATURE_PAGEFAULT_FLAG_WP | UFFD_FEATURE_EVENT_FORK | UFFD_FEATURE_EVENT_REMAP | UFFD_FEATURE_EVENT_REMOVE | UFFD_FEATURE_EVENT_UNMAP | UFFD_FEATURE_MISSING_HUGETLBFS | UFFD_FEATURE_MISSING_SHMEM | UFFD_FEATURE_SIGBUS | UFFD_FEATURE_THREAD_ID | UFFD_FEATURE_MINOR_HUGETLBFS | UFFD_FEATURE_MINOR_SHMEM | UFFD_FEATURE_EXACT_ADDRESS | UFFD_FEATURE_WP_HUGETLBFS_SHMEM | UFFD_FEATURE_WP_UNPOPULATED | UFFD_FEATURE_POISON)
+#define UFFD_API_FEATURES (UFFD_FEATURE_PAGEFAULT_FLAG_WP | UFFD_FEATURE_EVENT_FORK | UFFD_FEATURE_EVENT_REMAP | UFFD_FEATURE_EVENT_REMOVE | UFFD_FEATURE_EVENT_UNMAP | UFFD_FEATURE_MISSING_HUGETLBFS | UFFD_FEATURE_MISSING_SHMEM | UFFD_FEATURE_SIGBUS | UFFD_FEATURE_THREAD_ID | UFFD_FEATURE_MINOR_HUGETLBFS | UFFD_FEATURE_MINOR_SHMEM | UFFD_FEATURE_EXACT_ADDRESS | UFFD_FEATURE_WP_HUGETLBFS_SHMEM | UFFD_FEATURE_WP_UNPOPULATED | UFFD_FEATURE_POISON | UFFD_FEATURE_WP_ASYNC)
 #define UFFD_API_IOCTLS ((__u64) 1 << _UFFDIO_REGISTER | (__u64) 1 << _UFFDIO_UNREGISTER | (__u64) 1 << _UFFDIO_API)
 #define UFFD_API_RANGE_IOCTLS ((__u64) 1 << _UFFDIO_WAKE | (__u64) 1 << _UFFDIO_COPY | (__u64) 1 << _UFFDIO_ZEROPAGE | (__u64) 1 << _UFFDIO_WRITEPROTECT | (__u64) 1 << _UFFDIO_CONTINUE | (__u64) 1 << _UFFDIO_POISON)
 #define UFFD_API_RANGE_IOCTLS_BASIC ((__u64) 1 << _UFFDIO_WAKE | (__u64) 1 << _UFFDIO_COPY | (__u64) 1 << _UFFDIO_WRITEPROTECT | (__u64) 1 << _UFFDIO_CONTINUE | (__u64) 1 << _UFFDIO_POISON)
@@ -103,6 +91,7 @@ struct uffdio_api {
 #define UFFD_FEATURE_WP_HUGETLBFS_SHMEM (1 << 12)
 #define UFFD_FEATURE_WP_UNPOPULATED (1 << 13)
 #define UFFD_FEATURE_POISON (1 << 14)
+#define UFFD_FEATURE_WP_ASYNC (1 << 15)
   __u64 features;
   __u64 ioctls;
 };

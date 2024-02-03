@@ -43,6 +43,7 @@ while getopts ":-:" opt; do
                 resume) clean= ;;
                 musl) use_musl=true ;;
                 skip-go) unset build_go ;;
+                skip-soong) unset build_soong ;;
                 skip-soong-tests) skip_soong_tests=--skip-soong-tests ;;
                 skip-asan) unset build_asan ;;
                 *) echo "Unknown option --${OPTARG}"; exit 1 ;;
@@ -319,6 +320,10 @@ EOF
         cd ${SOONG_OUT}/dist-common
         zip -qryX build-common-prebuilts.zip *
     )
+fi
+
+if [ -z "${skip_soong_tests}" ]; then
+    build/soong/scripts/run-soong-tests-with-go-tools.sh
 fi
 
 # Go

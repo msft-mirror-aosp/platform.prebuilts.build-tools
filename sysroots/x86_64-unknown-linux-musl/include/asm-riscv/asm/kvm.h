@@ -1,21 +1,9 @@
-/****************************************************************************
- ****************************************************************************
- ***
- ***   This header was automatically generated from a Linux kernel header
- ***   of the same name, to make information necessary for userspace to
- ***   call into the kernel available to libc.  It contains only constants,
- ***   structures, and macros generated from the original header, and thus,
- ***   contains no copyrightable information.
- ***
- ***   To edit the content of this header, modify the corresponding
- ***   source file (e.g. under external/kernel-headers/original/) then
- ***   run bionic/libc/kernel/tools/update_all.py
- ***
- ***   Any manual change here will be lost the next time this script will
- ***   be run. You've been warned!
- ***
- ****************************************************************************
- ****************************************************************************/
+/*
+ * This file is auto-generated. Modifications will be lost.
+ *
+ * See https://android.googlesource.com/platform/bionic/+/master/libc/kernel/
+ * for more information.
+ */
 #ifndef __LINUX_KVM_RISCV_H
 #define __LINUX_KVM_RISCV_H
 #ifndef __ASSEMBLY__
@@ -65,6 +53,7 @@ struct kvm_riscv_csr {
   unsigned long sip;
   unsigned long satp;
   unsigned long scounteren;
+  unsigned long senvcfg;
 };
 struct kvm_riscv_aia_csr {
   unsigned long siselect;
@@ -74,6 +63,9 @@ struct kvm_riscv_aia_csr {
   unsigned long siph;
   unsigned long iprio1h;
   unsigned long iprio2h;
+};
+struct kvm_riscv_smstateen_csr {
+  unsigned long sstateen0;
 };
 struct kvm_riscv_timer {
   __u64 frequency;
@@ -105,6 +97,8 @@ enum KVM_RISCV_ISA_EXT_ID {
   KVM_RISCV_ISA_EXT_ZICSR,
   KVM_RISCV_ISA_EXT_ZIFENCEI,
   KVM_RISCV_ISA_EXT_ZIHPM,
+  KVM_RISCV_ISA_EXT_SMSTATEEN,
+  KVM_RISCV_ISA_EXT_ZICOND,
   KVM_RISCV_ISA_EXT_MAX,
 };
 enum KVM_RISCV_SBI_EXT_ID {
@@ -117,6 +111,7 @@ enum KVM_RISCV_SBI_EXT_ID {
   KVM_RISCV_SBI_EXT_PMU,
   KVM_RISCV_SBI_EXT_EXPERIMENTAL,
   KVM_RISCV_SBI_EXT_VENDOR,
+  KVM_RISCV_SBI_EXT_DBCN,
   KVM_RISCV_SBI_EXT_MAX,
 };
 #define KVM_RISCV_TIMER_STATE_OFF 0
@@ -133,8 +128,10 @@ enum KVM_RISCV_SBI_EXT_ID {
 #define KVM_REG_RISCV_CSR (0x03 << KVM_REG_RISCV_TYPE_SHIFT)
 #define KVM_REG_RISCV_CSR_GENERAL (0x0 << KVM_REG_RISCV_SUBTYPE_SHIFT)
 #define KVM_REG_RISCV_CSR_AIA (0x1 << KVM_REG_RISCV_SUBTYPE_SHIFT)
+#define KVM_REG_RISCV_CSR_SMSTATEEN (0x2 << KVM_REG_RISCV_SUBTYPE_SHIFT)
 #define KVM_REG_RISCV_CSR_REG(name) (offsetof(struct kvm_riscv_csr, name) / sizeof(unsigned long))
 #define KVM_REG_RISCV_CSR_AIA_REG(name) (offsetof(struct kvm_riscv_aia_csr, name) / sizeof(unsigned long))
+#define KVM_REG_RISCV_CSR_SMSTATEEN_REG(name) (offsetof(struct kvm_riscv_smstateen_csr, name) / sizeof(unsigned long))
 #define KVM_REG_RISCV_TIMER (0x04 << KVM_REG_RISCV_TYPE_SHIFT)
 #define KVM_REG_RISCV_TIMER_REG(name) (offsetof(struct kvm_riscv_timer, name) / sizeof(__u64))
 #define KVM_REG_RISCV_FP_F (0x05 << KVM_REG_RISCV_TYPE_SHIFT)
