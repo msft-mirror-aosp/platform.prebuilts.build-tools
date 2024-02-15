@@ -30,20 +30,12 @@ license {
     ],
     license_text: [
         "sysroots/aarch64-unknown-linux-musl/NOTICE.bionic",
-        "sysroots/aarch64-unknown-linux-musl/NOTICE.libc++",
-        "sysroots/aarch64-unknown-linux-musl/NOTICE.libc++abi",
         "sysroots/aarch64-unknown-linux-musl/NOTICE.zlib",
         "sysroots/arm-unknown-linux-musleabihf/NOTICE.bionic",
-        "sysroots/arm-unknown-linux-musleabihf/NOTICE.libc++",
-        "sysroots/arm-unknown-linux-musleabihf/NOTICE.libc++abi",
         "sysroots/arm-unknown-linux-musleabihf/NOTICE.zlib",
         "sysroots/i686-unknown-linux-musl/NOTICE.bionic",
-        "sysroots/i686-unknown-linux-musl/NOTICE.libc++",
-        "sysroots/i686-unknown-linux-musl/NOTICE.libc++abi",
         "sysroots/i686-unknown-linux-musl/NOTICE.zlib",
         "sysroots/x86_64-unknown-linux-musl/NOTICE.bionic",
-        "sysroots/x86_64-unknown-linux-musl/NOTICE.libc++",
-        "sysroots/x86_64-unknown-linux-musl/NOTICE.libc++abi",
         "sysroots/x86_64-unknown-linux-musl/NOTICE.zlib",
     ],
 }
@@ -266,7 +258,14 @@ cpython3_cc_prebuilt_binary {
 
 filegroup {
     name: "py3-stdlib-prebuilt-srcs",
-    visibility: ["//external/python/cpython3/Lib"],
+    visibility: ["//visibility:private"],
     srcs: ["common/py3-stdlib/**/*.py"],
     path: "common/py3-stdlib",
+}
+
+python_library_host {
+    name: "py3-stdlib-prebuilt",
+    is_internal: true,
+    pkg_path: "python3.11",
+    srcs: [":py3-stdlib-prebuilt-srcs"],
 }
