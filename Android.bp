@@ -137,6 +137,25 @@ prebuilt_build_tool {
     },
 }
 
+prebuilt_build_tool {
+    name: "make",
+    enabled: false,
+    arch: {
+        x86_64: {
+            enabled: true,
+        },
+    },
+    target: {
+        darwin: {
+            src: "darwin-x86/bin/make",
+        },
+        linux: {
+            src: "linux-x86/bin/make",
+        },
+    },
+    visibility: ["//vendor:__subpackages__"],
+}
+
 ///
 // cpython3 host prebuilts
 ///
