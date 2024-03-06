@@ -105,3 +105,9 @@ filegroup(
         "common/bison/**",
     ]),
 )
+
+# Point to the directory so variables can know where to set BISON_PKGDATADIR to
+filegroup(
+    name = "bison.runfiles_dir",
+    srcs = ["common/bison"],
+)
