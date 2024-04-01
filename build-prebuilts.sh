@@ -128,6 +128,7 @@ EOF
         hidl-lint
         m4
         make
+        n2
         ninja
         one-true-awk
         openssl
