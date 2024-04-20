@@ -175,15 +175,19 @@ cpython3_cc_prebuilt_binary {
     stl: "none",
     target: {
         glibc_x86_64: {
-            srcs: ["linux-x86/bin/py3-launcher64"]
+            srcs: ["linux-x86/bin/py3-launcher64"],
         },
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher64"]
+            srcs: ["linux_musl-arm64/bin/py3-launcher64"],
         },
         musl_x86_64: {
-            srcs: ["linux_musl-x86/bin/py3-launcher64"]
+            srcs: ["linux_musl-x86/bin/py3-launcher64"],
         },
         darwin_x86_64: {
+            srcs: ["darwin-x86/bin/py3-launcher64"],
+        },
+        darwin_arm64: {
+            // The darwin-x86 folder actually contains universal binaries that have both x86 and arm code
             srcs: ["darwin-x86/bin/py3-launcher64"],
         },
     },
@@ -205,10 +209,10 @@ cpython3_cc_prebuilt_binary {
     stl: "none",
     target: {
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher-static64"]
+            srcs: ["linux_musl-arm64/bin/py3-launcher-static64"],
         },
         musl_x86_64: {
-            srcs: ["linux_musl-x86/bin/py3-launcher-static64"]
+            srcs: ["linux_musl-x86/bin/py3-launcher-static64"],
         },
     },
 
@@ -229,15 +233,19 @@ cpython3_cc_prebuilt_binary {
     stl: "none",
     target: {
         glibc_x86_64: {
-            srcs: ["linux-x86/bin/py3-launcher-autorun64"]
+            srcs: ["linux-x86/bin/py3-launcher-autorun64"],
         },
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher-autorun64"]
+            srcs: ["linux_musl-arm64/bin/py3-launcher-autorun64"],
         },
         musl_x86_64: {
-            srcs: ["linux_musl-x86/bin/py3-launcher-autorun64"]
+            srcs: ["linux_musl-x86/bin/py3-launcher-autorun64"],
         },
         darwin_x86_64: {
+            srcs: ["darwin-x86/bin/py3-launcher-autorun64"],
+        },
+        darwin_arm64: {
+            // The darwin-x86 folder actually contains universal binaries that have both x86 and arm code
             srcs: ["darwin-x86/bin/py3-launcher-autorun64"],
         },
     },
@@ -259,10 +267,10 @@ cpython3_cc_prebuilt_binary {
     stl: "none",
     target: {
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher-autorun-static64"]
+            srcs: ["linux_musl-arm64/bin/py3-launcher-autorun-static64"],
         },
         musl_x86_64: {
-            srcs: ["linux_musl-x86/bin/py3-launcher-autorun-static64"]
+            srcs: ["linux_musl-x86/bin/py3-launcher-autorun-static64"],
         },
     },
 
