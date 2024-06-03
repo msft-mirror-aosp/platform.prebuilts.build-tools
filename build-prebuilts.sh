@@ -128,12 +128,14 @@ EOF
         hidl-lint
         m4
         make
+        n2
         ninja
         one-true-awk
         openssl
         py3-cmd
         py3-launcher64
         py3-launcher-autorun64
+        tool_event_logger
         toybox
         xz
         zipalign
@@ -203,7 +205,7 @@ EOF
     fi
 
     # Build everything
-    build/soong/soong_ui.bash --make-mode --soong-only --skip-config BUILD_BROKEN_DISABLE_BAZEL=true ${skip_soong_tests} \
+    build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
         ${go_binaries} \
         ${binaries} \
         ${cross_binaries} \
@@ -214,6 +216,8 @@ EOF
         ${musl_x86_64_sysroot} \
         ${musl_arm_sysroot} \
         ${musl_arm64_sysroot} \
+        ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests \
+        ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests \
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
         ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test \
         ${SOONG_HOST_OUT}/nativetest64/par_test/par_test \
@@ -221,6 +225,10 @@ EOF
 
     # Run ninja tests
     ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
+
+    # Run n2 tests
+    ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
+    N2_PATH=${SOONG_HOST_OUT}/bin/n2 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
 
     # Run ckati tests
     ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
@@ -284,7 +292,7 @@ EOF
         rm -rf ${SOONG_HOST_OUT}
 
         # Build everything with ASAN
-        build/soong/soong_ui.bash --make-mode --soong-only --skip-config BUILD_BROKEN_DISABLE_BAZEL=true ${skip_soong_tests} \
+        build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
             ${asan_binaries} \
             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
             ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
