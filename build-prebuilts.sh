@@ -43,6 +43,7 @@ while getopts ":-:" opt; do
                 resume) clean= ;;
                 musl) use_musl=true ;;
                 skip-go) unset build_go ;;
+                skip-soong) unset build_soong ;;
                 skip-soong-tests) skip_soong_tests=--skip-soong-tests ;;
                 skip-asan) unset build_asan ;;
                 *) echo "Unknown option --${OPTARG}"; exit 1 ;;
@@ -104,20 +105,16 @@ EOF
         mv -f ${SOONG_OUT}/soong.variables.tmp ${SOONG_OUT}/soong.variables
     fi
     SOONG_GO_BINARIES=(
-        bazel_notice_gen
         bpfmt
-        bssl_inject_hash
-        extract_linker
         go_extractor
-        htmlnotice
         merge_zips
         soong_zip
         runextractor
         rust_extractor
-        symbol_inject
         zip2zip
     )
     SOONG_BINARIES=(
+        aconfig
         acp
         aidl
         bison
@@ -125,19 +122,20 @@ EOF
         brotli
         bzip2
         ckati
-        ckati_stamp_dump
         flex
         gavinhoward-bc
         hidl-gen
         hidl-lint
         m4
         make
+        n2
         ninja
         one-true-awk
         openssl
         py3-cmd
         py3-launcher64
         py3-launcher-autorun64
+        tool_event_logger
         toybox
         xz
         zipalign
@@ -207,7 +205,7 @@ EOF
     fi
 
     # Build everything
-    build/soong/soong_ui.bash --make-mode --soong-only --skip-config BUILD_BROKEN_DISABLE_BAZEL=true ${skip_soong_tests} \
+    build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
         ${go_binaries} \
         ${binaries} \
         ${cross_binaries} \
@@ -218,15 +216,25 @@ EOF
         ${musl_x86_64_sysroot} \
         ${musl_arm_sysroot} \
         ${musl_arm64_sysroot} \
+        ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests \
+        ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests \
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
         ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test \
+        ${SOONG_HOST_OUT}/nativetest64/par_test/par_test \
         soong_docs
 
     # Run ninja tests
     ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
 
+    # Run n2 tests
+    ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
+    N2_PATH=${SOONG_HOST_OUT}/bin/n2 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
+
     # Run ckati tests
     ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
+
+    # Run python par/py*-cmd tests
+    ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
 
     # Copy arch-specific binaries
     mkdir -p ${SOONG_OUT}/dist/bin
@@ -284,7 +292,7 @@ EOF
         rm -rf ${SOONG_HOST_OUT}
 
         # Build everything with ASAN
-        build/soong/soong_ui.bash --make-mode --soong-only --skip-config BUILD_BROKEN_DISABLE_BAZEL=true ${skip_soong_tests} \
+        build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
             ${asan_binaries} \
             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
             ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
@@ -320,6 +328,10 @@ EOF
         cd ${SOONG_OUT}/dist-common
         zip -qryX build-common-prebuilts.zip *
     )
+fi
+
+if [ -z "${skip_soong_tests}" ]; then
+    build/soong/scripts/run-soong-tests-with-go-tools.sh
 fi
 
 # Go
