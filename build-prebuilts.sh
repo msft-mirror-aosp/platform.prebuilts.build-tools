@@ -227,8 +227,8 @@ EOF
     ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
 
     # Run n2 tests
-    ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
-    N2_PATH=${SOONG_HOST_OUT}/bin/n2 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
+    timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
+    N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
 
     # Run ckati tests
     ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
