@@ -228,6 +228,7 @@ EOF
 
     # Run n2 tests, the --nocapture and --test-threads 1 is to display additional output while
     # attempting to debug a test flake
+    ulimit -c unlimited
     timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
     N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests --nocapture --test-threads 1
 
