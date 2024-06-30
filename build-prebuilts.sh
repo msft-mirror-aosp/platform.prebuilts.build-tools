@@ -226,11 +226,9 @@ EOF
     # Run ninja tests
     ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
 
-    # Run n2 tests, the --nocapture and --test-threads 1 is to display additional output while
-    # attempting to debug a test flake
-    ulimit -c unlimited
+    # Run n2 tests
     timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
-    N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests --nocapture --test-threads 1
+    N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
 
     # Run ckati tests
     ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
