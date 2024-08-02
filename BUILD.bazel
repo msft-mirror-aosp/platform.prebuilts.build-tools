@@ -1,4 +1,5 @@
 load("@bazel_tools//tools/python:toolchain.bzl", "py_runtime_pair")
+load(":prebuilt_tool.bzl", "prebuilt_tool")
 
 # Note: Do not rely on public visibility of files without exporing it below.
 # This statement will be removed in the future.
@@ -45,67 +46,23 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 
-sh_binary(
-    name = "flex",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/flex"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/flex"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/flex"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//visibility:public"],
-)
-
-sh_binary(
-    name = "m4",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/m4"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/m4"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/m4"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
-    visibility = ["//visibility:public"],
-)
-
-sh_binary(
+prebuilt_tool(
     name = "bison",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/bison"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/bison"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/bison"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
     visibility = ["//visibility:public"],
 )
 
-sh_binary(
+prebuilt_tool(
+    name = "flex",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "m4",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "soong_zip",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/soong_zip"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/soong_zip"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/soong_zip"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
     visibility = ["//visibility:public"],
 )
 
