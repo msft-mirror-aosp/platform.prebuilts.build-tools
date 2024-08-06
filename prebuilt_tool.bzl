@@ -36,17 +36,13 @@ def prebuilt_tool(
     native_binary(
         name = name,
         src = select({
-            "@platforms//os:macos": "darwin-x86/bin/" + actual,
-            "@platforms//os:linux": "linux-x86/bin/" + actual,
-            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": "linux_musl-x86/bin/" + actual,
-            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86_64": "linux_musl-x86/bin/" + actual,
+            Label("//build/kernel/kleaf/platforms/libc:glibc"): "linux-x86/bin/" + actual,
+            Label("//build/kernel/kleaf/platforms/libc:musl"): "linux_musl-x86/bin/" + actual,
         }),
         out = name,
         target_compatible_with = select({
-            "@platforms//os:macos": [],
-            "@platforms//os:linux": [],
-            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86_64": [],
+            Label("//build/kernel/kleaf/platforms/libc:glibc"): [],
+            Label("//build/kernel/kleaf/platforms/libc:musl"): [],
             "//conditions:default": ["@platforms//:incompatible"],
         }),
         **kwargs
