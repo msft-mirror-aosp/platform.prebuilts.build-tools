@@ -14,6 +14,8 @@
 
 """Declares a tool that fits multiple platforms/config settings."""
 
+load("@bazel_skylib//rules:native_binary.bzl", "native_binary")
+
 visibility("private")
 
 def prebuilt_tool(
@@ -31,14 +33,15 @@ def prebuilt_tool(
     if actual == None:
         actual = name
 
-    native.sh_binary(
+    native_binary(
         name = name,
-        srcs = select({
-            "@platforms//os:macos": ["darwin-x86/bin/" + actual],
-            "@platforms//os:linux": ["linux-x86/bin/" + actual],
-            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/" + actual],
-            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86_64": ["linux_musl-x86/bin/" + actual],
+        src = select({
+            "@platforms//os:macos": "darwin-x86/bin/" + actual,
+            "@platforms//os:linux": "linux-x86/bin/" + actual,
+            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": "linux_musl-x86/bin/" + actual,
+            "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86_64": "linux_musl-x86/bin/" + actual,
         }),
+        out = name,
         target_compatible_with = select({
             "@platforms//os:macos": [],
             "@platforms//os:linux": [],
