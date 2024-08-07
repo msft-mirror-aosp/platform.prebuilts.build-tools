@@ -5,16 +5,16 @@ load(":prebuilt_tool.bzl", "prebuilt_tool")
 # This statement will be removed in the future.
 package(default_visibility = ["//visibility:public"])
 
-[filegroup(
-    name = platform,
+filegroup(
+    name = "linux-x86",
     srcs = glob([
         "common/**",
-        "%s/bin/*" % platform,
-        "%s/lib64/*" % platform,
-        "path/%s/*" % platform,
+        "linux-x86/bin/*",
+        "linux-x86/lib64/*",
+        "path/linux-x86/*",
     ]),
     visibility = ["//visibility:public"],
-) for platform in ("linux-x86", "darwin")]
+)
 
 py_runtime(
     name = "python2",
