@@ -40,6 +40,7 @@ def prebuilt_tool(
             Label("//build/kernel/kleaf/platforms/libc:musl"): "linux_musl-x86/bin/" + actual,
         }),
         out = name,
+        data = [Label(":libs")],
         target_compatible_with = select({
             Label("//build/kernel/kleaf/platforms/libc:glibc"): [],
             Label("//build/kernel/kleaf/platforms/libc:musl"): [],
