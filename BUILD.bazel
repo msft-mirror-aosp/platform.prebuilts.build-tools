@@ -5,16 +5,16 @@ load(":prebuilt_tool.bzl", "prebuilt_tool")
 # This statement will be removed in the future.
 package(default_visibility = ["//visibility:public"])
 
-[filegroup(
-    name = platform,
+filegroup(
+    name = "linux-x86",
     srcs = glob([
         "common/**",
-        "%s/bin/*" % platform,
-        "%s/lib64/*" % platform,
-        "path/%s/*" % platform,
+        "linux-x86/bin/*",
+        "linux-x86/lib64/*",
+        "path/linux-x86/*",
     ]),
     visibility = ["//visibility:public"],
-) for platform in ("linux-x86", "darwin")]
+)
 
 py_runtime(
     name = "python2",
@@ -47,7 +47,24 @@ toolchain(
 )
 
 prebuilt_tool(
+    name = "awk",
+    actual = "one-true-awk",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "bc",
+    actual = "gavinhoward-bc",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "bison",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "bzip2",
     visibility = ["//visibility:public"],
 )
 
@@ -62,7 +79,37 @@ prebuilt_tool(
 )
 
 prebuilt_tool(
+    name = "make",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "openssl",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "runextractor",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "soong_zip",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "toybox",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "xz",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "ziptool",
     visibility = ["//visibility:public"],
 )
 
@@ -81,19 +128,3 @@ filegroup(
     srcs = ["common/bison"],
     visibility = ["//visibility:public"],
 )
-
-exports_files([
-    # keep sorted
-    "linux-x86/bin/bison",
-    "linux-x86/bin/bzip2",
-    "linux-x86/bin/flex",
-    "linux-x86/bin/m4",
-    "linux-x86/bin/make",
-    "linux-x86/bin/openssl",
-    "linux-x86/bin/runextractor",
-    "linux-x86/bin/toybox",
-    "linux-x86/bin/xz",
-    "linux-x86/bin/ziptool",
-    "path/linux-x86/awk",
-    "path/linux-x86/bc",
-])
