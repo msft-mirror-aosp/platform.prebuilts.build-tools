@@ -156,18 +156,7 @@ prebuilt_build_tool {
     visibility: ["//vendor:__subpackages__"],
 }
 
-///
-// cpython3 host prebuilts
-///
-soong_config_module_type {
-    name: "cpython3_cc_prebuilt_binary",
-    module_type: "cc_prebuilt_binary",
-    config_namespace: "cpython3",
-    bool_variables: ["force_build_host"],
-    properties: ["prefer"],
-}
-
-cpython3_cc_prebuilt_binary {
+cc_prebuilt_binary {
     name: "py3-launcher",
     host_supported: true,
     device_supported: false,
@@ -193,15 +182,13 @@ cpython3_cc_prebuilt_binary {
     },
 
     // Use the prebuilts for most branches
-    prefer: true,
-    soong_config_variables: {
-        force_build_host: {
-            prefer: false,
-        },
-    },
+    prefer: select(soong_config_variable("cpython3", "force_build_host"), {
+        true: false,
+        default: true,
+    }),
 }
 
-cpython3_cc_prebuilt_binary {
+cc_prebuilt_binary {
     name: "py3-launcher-static",
     host_supported: true,
     device_supported: false,
@@ -217,15 +204,13 @@ cpython3_cc_prebuilt_binary {
     },
 
     // Use the prebuilts for most branches
-    prefer: true,
-    soong_config_variables: {
-        force_build_host: {
-            prefer: false,
-        },
-    },
+    prefer: select(soong_config_variable("cpython3", "force_build_host"), {
+        true: false,
+        default: true,
+    }),
 }
 
-cpython3_cc_prebuilt_binary {
+cc_prebuilt_binary {
     name: "py3-launcher-autorun",
     host_supported: true,
     device_supported: false,
@@ -251,15 +236,13 @@ cpython3_cc_prebuilt_binary {
     },
 
     // Use the prebuilts for most branches
-    prefer: true,
-    soong_config_variables: {
-        force_build_host: {
-            prefer: false,
-        },
-    },
+    prefer: select(soong_config_variable("cpython3", "force_build_host"), {
+        true: false,
+        default: true,
+    }),
 }
 
-cpython3_cc_prebuilt_binary {
+cc_prebuilt_binary {
     name: "py3-launcher-autorun-static",
     host_supported: true,
     device_supported: false,
@@ -275,12 +258,10 @@ cpython3_cc_prebuilt_binary {
     },
 
     // Use the prebuilts for most branches
-    prefer: true,
-    soong_config_variables: {
-        force_build_host: {
-            prefer: false,
-        },
-    },
+    prefer: select(soong_config_variable("cpython3", "force_build_host"), {
+        true: false,
+        default: true,
+    }),
 }
 
 filegroup {
