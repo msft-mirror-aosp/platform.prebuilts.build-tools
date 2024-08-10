@@ -10,10 +10,36 @@ filegroup(
     srcs = glob([
         "common/**",
         "linux-x86/bin/*",
-        "linux-x86/lib64/*",
         "path/linux-x86/*",
-    ]),
+    ]) + [":linux-x86-libs"],
     visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "linux-x86-libs",
+    srcs = glob(["linux-x86/lib64/*"]),
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "linux_musl-x86-libs",
+    srcs = glob(["linux_musl-x86/lib64/*"]),
+    visibility = ["//visibility:private"],
+)
+
+# Used in prebuilt_tool()
+alias(
+    name = "libs",
+    actual = select({
+        "//build/kernel/kleaf/platforms/libc:glibc": ":linux-x86-libs",
+        "//build/kernel/kleaf/platforms/libc:musl": ":linux_musl-x86-libs",
+    }),
+    target_compatible_with = select({
+        "//build/kernel/kleaf/platforms/libc:glibc": [],
+        "//build/kernel/kleaf/platforms/libc:musl": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    visibility = ["//visibility:private"],
 )
 
 py_runtime(
@@ -47,7 +73,24 @@ toolchain(
 )
 
 prebuilt_tool(
+    name = "awk",
+    actual = "one-true-awk",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "bc",
+    actual = "gavinhoward-bc",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "bison",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "bzip2",
     visibility = ["//visibility:public"],
 )
 
@@ -62,7 +105,37 @@ prebuilt_tool(
 )
 
 prebuilt_tool(
+    name = "make",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "openssl",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "runextractor",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "soong_zip",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "toybox",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "xz",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "ziptool",
     visibility = ["//visibility:public"],
 )
 
@@ -81,19 +154,3 @@ filegroup(
     srcs = ["common/bison"],
     visibility = ["//visibility:public"],
 )
-
-exports_files([
-    # keep sorted
-    "linux-x86/bin/bison",
-    "linux-x86/bin/bzip2",
-    "linux-x86/bin/flex",
-    "linux-x86/bin/m4",
-    "linux-x86/bin/make",
-    "linux-x86/bin/openssl",
-    "linux-x86/bin/runextractor",
-    "linux-x86/bin/toybox",
-    "linux-x86/bin/xz",
-    "linux-x86/bin/ziptool",
-    "path/linux-x86/awk",
-    "path/linux-x86/bc",
-])
