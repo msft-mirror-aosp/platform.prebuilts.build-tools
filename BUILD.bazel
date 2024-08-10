@@ -10,10 +10,36 @@ filegroup(
     srcs = glob([
         "common/**",
         "linux-x86/bin/*",
-        "linux-x86/lib64/*",
         "path/linux-x86/*",
-    ]),
+    ]) + [":linux-x86-libs"],
     visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "linux-x86-libs",
+    srcs = glob(["linux-x86/lib64/*"]),
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "linux_musl-x86-libs",
+    srcs = glob(["linux_musl-x86/lib64/*"]),
+    visibility = ["//visibility:private"],
+)
+
+# Used in prebuilt_tool()
+alias(
+    name = "libs",
+    actual = select({
+        "//build/kernel/kleaf/platforms/libc:glibc": ":linux-x86-libs",
+        "//build/kernel/kleaf/platforms/libc:musl": ":linux_musl-x86-libs",
+    }),
+    target_compatible_with = select({
+        "//build/kernel/kleaf/platforms/libc:glibc": [],
+        "//build/kernel/kleaf/platforms/libc:musl": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    visibility = ["//visibility:private"],
 )
 
 py_runtime(
