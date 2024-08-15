@@ -1,22 +1,53 @@
 load("@bazel_tools//tools/python:toolchain.bzl", "py_runtime_pair")
+load(":prebuilt_tool.bzl", "prebuilt_tool")
 
+# Note: Do not rely on public visibility of files without exporing it below.
+# This statement will be removed in the future.
 package(default_visibility = ["//visibility:public"])
 
-[filegroup(
-    name = platform,
+filegroup(
+    name = "linux-x86",
     srcs = glob([
         "common/**",
-        "%s/bin/*" % platform,
-        "%s/lib64/*" % platform,
-        "path/%s/*" % platform,
-    ]),
-) for platform in ("linux-x86", "darwin")]
+        "linux-x86/bin/*",
+        "path/linux-x86/*",
+    ]) + [":linux-x86-libs"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "linux-x86-libs",
+    srcs = glob(["linux-x86/lib64/*"]),
+    visibility = ["//visibility:private"],
+)
+
+filegroup(
+    name = "linux_musl-x86-libs",
+    srcs = glob(["linux_musl-x86/lib64/*"]),
+    visibility = ["//visibility:private"],
+)
+
+# Used in prebuilt_tool()
+alias(
+    name = "libs",
+    actual = select({
+        "//build/kernel/kleaf/platforms/libc:glibc": ":linux-x86-libs",
+        "//build/kernel/kleaf/platforms/libc:musl": ":linux_musl-x86-libs",
+    }),
+    target_compatible_with = select({
+        "//build/kernel/kleaf/platforms/libc:glibc": [],
+        "//build/kernel/kleaf/platforms/libc:musl": [],
+        "//conditions:default": ["@platforms//:incompatible"],
+    }),
+    visibility = ["//visibility:private"],
+)
 
 py_runtime(
     name = "python2",
     files = ["linux-x86/bin/py2-cmd"],
     interpreter = "linux-x86/bin/py2-cmd",
     python_version = "PY2",
+    visibility = ["//visibility:public"],
 )
 
 py_runtime(
@@ -24,78 +55,114 @@ py_runtime(
     files = ["linux-x86/bin/py3-cmd"],
     interpreter = "linux-x86/bin/py3-cmd",
     python_version = "PY3",
+    visibility = ["//visibility:public"],
 )
 
 py_runtime_pair(
     name = "py_runtime_pair",
     py2_runtime = ":python2",
     py3_runtime = ":python3",
+    visibility = ["//visibility:public"],
 )
 
 toolchain(
     name = "py_toolchain",
     toolchain = ":py_runtime_pair",
     toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+    visibility = ["//visibility:public"],
 )
 
-sh_binary(
-    name = "flex",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/flex"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/flex"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/flex"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+py_runtime(
+    name = "python3_musl",
+    files = ["linux_musl-x86/bin/py3-cmd"],
+    interpreter = "linux_musl-x86/bin/py3-cmd",
+    python_version = "PY3",
+    visibility = ["//visibility:private"],
 )
 
-sh_binary(
-    name = "m4",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/m4"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/m4"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/m4"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+py_runtime_pair(
+    name = "py_runtime_pair_musl",
+    py3_runtime = ":python3_musl",
+    visibility = ["//visibility:private"],
 )
 
-sh_binary(
+toolchain(
+    name = "py_toolchain_musl",
+    exec_compatible_with = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+        "//build/kernel/kleaf/platforms/libc:musl",
+    ],
+    toolchain = ":py_runtime_pair_musl",
+    toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+    visibility = ["//visibility:private"],
+)
+
+prebuilt_tool(
+    name = "awk",
+    actual = "one-true-awk",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "bc",
+    actual = "gavinhoward-bc",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "bison",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/bison"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/bison"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/bison"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+    visibility = ["//visibility:public"],
 )
 
-sh_binary(
+prebuilt_tool(
+    name = "bzip2",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "flex",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "m4",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "make",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "openssl",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "runextractor",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
     name = "soong_zip",
-    srcs = select({
-        "//build/bazel_common_rules/platforms/os:darwin": ["darwin-x86/bin/soong_zip"],
-        "//build/bazel_common_rules/platforms/os:linux": ["linux-x86/bin/soong_zip"],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": ["linux_musl-x86/bin/soong_zip"],
-    }),
-    target_compatible_with = select({
-        "//build/bazel_common_rules/platforms/os:darwin": [],
-        "//build/bazel_common_rules/platforms/os:linux": [],
-        "//build/bazel_common_rules/platforms/os_arch:linux_musl_x86": [],
-        "//conditions:default": ["@platforms//:incompatible"],
-    }),
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "toybox",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "xz",
+    visibility = ["//visibility:public"],
+)
+
+prebuilt_tool(
+    name = "ziptool",
+    visibility = ["//visibility:public"],
 )
 
 # Additional runfiles required by bison
@@ -104,10 +171,12 @@ filegroup(
     srcs = glob([
         "common/bison/**",
     ]),
+    visibility = ["//visibility:public"],
 )
 
 # Point to the directory so variables can know where to set BISON_PKGDATADIR to
 filegroup(
     name = "bison.runfiles_dir",
     srcs = ["common/bison"],
+    visibility = ["//visibility:public"],
 )
