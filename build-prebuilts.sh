@@ -96,6 +96,11 @@ if [ -n "${build_soong}" ]; then
         "art_module": {
             "source_build": "true"
         }
+    },
+    "VendorVarTypes": {
+        "cpython3": {
+            "force_build_host": "bool"
+        }
     }
 }
 EOF
