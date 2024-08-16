@@ -96,6 +96,11 @@ if [ -n "${build_soong}" ]; then
         "art_module": {
             "source_build": "true"
         }
+    },
+    "VendorVarTypes": {
+        "cpython3": {
+            "force_build_host": "bool"
+        }
     }
 }
 EOF
@@ -219,7 +224,7 @@ EOF
         ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests \
         ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests \
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
-        ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test \
+        ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test \
         ${SOONG_HOST_OUT}/nativetest64/par_test/par_test \
         soong_docs
 
@@ -231,7 +236,7 @@ EOF
     N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
 
     # Run ckati tests
-    ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
+    ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
 
     # Run python par/py*-cmd tests
     ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
@@ -295,13 +300,13 @@ EOF
         build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
             ${asan_binaries} \
             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
-            ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
+            ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
 
         # Run ninja tests
         ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
 
         # Run ckati tests
-        ${SOONG_HOST_OUT}/nativetest64/ckati_test/find_test
+        ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
 
         # Copy arch-specific binaries
         mkdir -p ${SOONG_OUT}/dist/asan/bin
