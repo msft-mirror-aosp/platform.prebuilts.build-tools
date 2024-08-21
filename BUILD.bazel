@@ -1,10 +1,6 @@
 load("@bazel_tools//tools/python:toolchain.bzl", "py_runtime_pair")
 load(":prebuilt_tool.bzl", "prebuilt_tool")
 
-# Note: Do not rely on public visibility of files without exporing it below.
-# This statement will be removed in the future.
-package(default_visibility = ["//visibility:public"])
-
 filegroup(
     name = "linux-x86",
     srcs = glob([
