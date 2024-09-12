@@ -112,6 +112,7 @@ EOF
     SOONG_GO_BINARIES=(
         bpfmt
         go_extractor
+        kotlinc_extractor
         merge_zips
         soong_zip
         runextractor
