@@ -96,6 +96,11 @@ if [ -n "${build_soong}" ]; then
         "art_module": {
             "source_build": "true"
         }
+    },
+    "VendorVarTypes": {
+        "cpython3": {
+            "force_build_host": "bool"
+        }
     }
 }
 EOF
@@ -107,6 +112,7 @@ EOF
     SOONG_GO_BINARIES=(
         bpfmt
         go_extractor
+        kotlinc_extractor
         merge_zips
         soong_zip
         runextractor
