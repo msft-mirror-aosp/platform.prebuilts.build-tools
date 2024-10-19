@@ -277,3 +277,9 @@ python_library_host {
     pkg_path: "python3.11",
     srcs: [":py3-stdlib-prebuilt-srcs"],
 }
+
+dirgroup {
+    name: "trusty_dirgroup_prebuilts_build-tools",
+    dirs: ["."],
+    visibility: ["//trusty/vendor/google/aosp/scripts"],
+}
