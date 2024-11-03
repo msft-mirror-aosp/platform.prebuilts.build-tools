@@ -128,6 +128,7 @@ EOF
         brotli
         bzip2
         ckati
+        edit_monitor
         flex
         gavinhoward-bc
         hidl-gen
