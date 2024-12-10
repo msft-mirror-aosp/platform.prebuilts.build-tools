@@ -39,14 +39,6 @@ alias(
 )
 
 py_runtime(
-    name = "python2",
-    files = ["linux-x86/bin/py2-cmd"],
-    interpreter = "linux-x86/bin/py2-cmd",
-    python_version = "PY2",
-    visibility = ["//visibility:public"],
-)
-
-py_runtime(
     name = "python3",
     files = ["linux-x86/bin/py3-cmd"],
     interpreter = "linux-x86/bin/py3-cmd",
@@ -56,7 +48,6 @@ py_runtime(
 
 py_runtime_pair(
     name = "py_runtime_pair",
-    py2_runtime = ":python2",
     py3_runtime = ":python3",
     visibility = ["//visibility:public"],
 )
