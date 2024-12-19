@@ -78,7 +78,7 @@ export PATH=${TOP}/prebuilts/build-tools/path/${OS}-x86:$PATH
 
 if [ -n "${build_soong}" ]; then
     SOONG_OUT=${OUT_DIR}/soong
-    SOONG_HOST_OUT=${OUT_DIR}/soong/host/${OS}-x86
+    SOONG_HOST_OUT=${OUT_DIR}/host/${OS}-x86
     [[ -z "${clean}" ]] || rm -rf ${SOONG_OUT}
     mkdir -p ${SOONG_OUT}
     rm -rf ${SOONG_OUT}/dist ${SOONG_OUT}/dist-common ${SOONG_OUT}/dist-arm64
@@ -203,7 +203,7 @@ EOF
 
         # Build cross-compiled musl arm64 binaries, except for go binaries
         # since Blueprint doesn't have cross compilation support for them.
-        SOONG_HOST_ARM_OUT=${OUT_DIR}/soong/host/linux-arm64
+        SOONG_HOST_ARM_OUT=${OUT_DIR}/host/linux-arm64
         cross_binaries="${SOONG_BINARIES[@]/#/${SOONG_HOST_ARM_OUT}/bin/}"
         cross_binaries="${cross_binaries} ${SOONG_MUSL_BINARIES[@]/#/${SOONG_HOST_ARM_OUT}/bin/}"
 
