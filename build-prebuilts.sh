@@ -178,7 +178,6 @@ EOF
         SOONG_BINARIES+=(
             create_minidebuginfo
             nsjail
-            py2-cmd
         )
     fi
 
