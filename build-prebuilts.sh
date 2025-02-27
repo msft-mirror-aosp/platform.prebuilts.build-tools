@@ -264,7 +264,7 @@ EOF
     cp -r external/flex/src/FlexLexer.h ${SOONG_OUT}/dist-common/flex/
     cp external/flex/NOTICE ${SOONG_OUT}/dist-common/flex/
 
-    unzip -q -d ${SOONG_OUT}/dist-common/py3-stdlib ${py3_stdlib_zip}
+    ${SOONG_OUT}/dist/bin/zip2zip -i ${py3_stdlib_zip} -o ${OUT_DIR}/py3-stdlib.zip "**/*:py3-stdlib/"
     cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-stdlib/
 
     if [[ ${use_musl} = "true" ]]; then
@@ -316,24 +316,16 @@ EOF
     fi
 
     # Package arch-specific prebuilts
-    (
-        cd ${SOONG_OUT}/dist
-        zip -qryX build-prebuilts.zip *
-    )
+    ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-prebuilts.zip -C ${SOONG_OUT}/dist -D ${SOONG_OUT}/dist
 
     if [[ ${use_musl} = "true" ]]; then
         # Package cross-compiled prebuilts
-        (
-            cd ${SOONG_OUT}/dist-arm64
-            zip -qryX build-arm64-prebuilts.zip *
-        )
+        ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-arm64-prebuilts.zip -C ${SOONG_OUT}/dist-arm64 -D ${SOONG_OUT}/dist-arm64
     fi
 
     # Package common prebuilts
-    (
-        cd ${SOONG_OUT}/dist-common
-        zip -qryX build-common-prebuilts.zip *
-    )
+    ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-common-prebuilts.tmp.zip -C ${SOONG_OUT}/dist-common -D ${SOONG_OUT}/dist-common
+    ${SOONG_OUT}/dist/bin/merge_zips ${OUT_DIR}/build-common-prebuilts.zip ${OUT_DIR}/build-common-prebuilts.tmp.zip ${OUT_DIR}/py3-stdlib.zip
 fi
 
 if [ -z "${skip_soong_tests}" ]; then
@@ -346,6 +338,7 @@ if [ -n "${build_go}" ]; then
     rm -rf ${GO_OUT}
     mkdir -p ${GO_OUT}
     cp -a ${TOP}/toolchain/go/* ${GO_OUT}/
+    rm -f ${GO_OUT}/update_prebuilts.sh
     (
         cd ${GO_OUT}/src
         export GOROOT_BOOTSTRAP=${TOP}/prebuilts/go/${OS}-x86
@@ -357,21 +350,18 @@ if [ -n "${build_go}" ]; then
         rm -rf ../pkg/obj
         GOROOT=$(pwd)/.. ../bin/go install -race std
     )
-    (
-        cd ${GO_OUT}
-        zip -qryX go.zip * --exclude update_prebuilts.sh
-    )
+    ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/go.zip -C ${GO_OUT} -D ${GO_OUT}
 fi
 
 if [ -n "${DIST_DIR}" ]; then
     mkdir -p ${DIST_DIR} || true
 
     if [ -n "${build_soong}" ]; then
-        cp ${SOONG_OUT}/dist/build-prebuilts.zip ${DIST_DIR}/
-        cp ${SOONG_OUT}/dist-common/build-common-prebuilts.zip ${DIST_DIR}/
+        cp ${OUT_DIR}/build-prebuilts.zip ${DIST_DIR}/
+        cp ${OUT_DIR}/build-common-prebuilts.zip ${DIST_DIR}/
         cp ${SOONG_OUT}/docs/*.html ${DIST_DIR}/
         if [ ${use_musl} = "true" ]; then
-            cp ${SOONG_OUT}/dist-arm64/build-arm64-prebuilts.zip ${DIST_DIR}/
+            cp ${OUT_DIR}/build-arm64-prebuilts.zip ${DIST_DIR}/
 
             cp ${SOONG_OUT}/musl-sysroot-x86_64-unknown-linux-musl.zip ${DIST_DIR}/
             cp ${SOONG_OUT}/musl-sysroot-i686-unknown-linux-musl.zip ${DIST_DIR}/
@@ -380,6 +370,6 @@ if [ -n "${DIST_DIR}" ]; then
         fi
     fi
     if [ -n "${build_go}" ]; then
-        cp ${GO_OUT}/go.zip ${DIST_DIR}/
+        cp ${OUT_DIR}/go.zip ${DIST_DIR}/
     fi
 fi
