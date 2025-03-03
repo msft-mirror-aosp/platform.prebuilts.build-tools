@@ -26,12 +26,29 @@ Darwin)
     OS='darwin'
     ;;
 *)
+    echo "Unrecognized OS $UNAME"
+    exit 1
+    ;;
+esac
+
+UNAME_ARCH=$(uname -m)
+case "$UNAME_ARCH" in
+x86_64)
+    ARCH='x86'
+    ;;
+aarch64)
+    ARCH="arm64"
+    ;;
+*)
+    echo "Unrecognized architecture $UNAME_ARCH"
     exit 1
     ;;
 esac
 
 build_soong=1
 build_asan=1
+build_native=1
+build_java=1
 [[ ! -d ${TOP}/toolchain/go ]] || build_go=1
 
 use_musl=false
@@ -41,7 +58,7 @@ while getopts ":-:" opt; do
         -)
             case "${OPTARG}" in
                 resume) clean= ;;
-                musl) use_musl=true ;;
+                musl) use_musl=true; build_arm64_cross_musl=1 ;;
                 skip-go) unset build_go ;;
                 skip-soong) unset build_soong ;;
                 skip-soong-tests) skip_soong_tests=--skip-soong-tests ;;
@@ -52,13 +69,26 @@ while getopts ":-:" opt; do
     esac
 done
 
+primary_arch=""
+if [[ ${ARCH} = x86 ]]; then
+    primary_arch="\"HostArch\":\"x86_64\","
+elif [[ ${ARCH} = arm64 ]]; then
+    primary_arch="\"HostArch\":\"arm64\","
+    use_musl=true
+    unset build_native
+    unset build_java
+    unset build_asan
+    unset build_arm64_cross_musl
+    skip_soong_tests=--skip-soong-tests
+fi
+
 secondary_arch=""
-if [[ ${OS} = linux ]]; then
+if [[ ${OS} = linux && ${ARCH} = x86 ]]; then
     secondary_arch="\"HostSecondaryArch\":\"x86\","
 fi
 
 cross_compile=""
-if [[ ${use_musl} = "true" ]]; then
+if [[ ${use_musl} = "true" && ${ARCH} = x86 ]]; then
     cross_compile=$(cat <<EOF
     "CrossHost": "linux_musl",
     "CrossHostArch": "arm64",
@@ -74,18 +104,18 @@ EOF
 fi
 
 # Use toybox and other prebuilts even outside of the build (test running, go, etc)
-export PATH=${TOP}/prebuilts/build-tools/path/${OS}-x86:$PATH
+export PATH=${TOP}/prebuilts/build-tools/path/${OS}-${ARCH}:$PATH
 
 if [ -n "${build_soong}" ]; then
     SOONG_OUT=${OUT_DIR}/soong
-    SOONG_HOST_OUT=${OUT_DIR}/host/${OS}-x86
+    SOONG_HOST_OUT=${OUT_DIR}/host/${OS}-${ARCH}
     [[ -z "${clean}" ]] || rm -rf ${SOONG_OUT}
     mkdir -p ${SOONG_OUT}
     rm -rf ${SOONG_OUT}/dist ${SOONG_OUT}/dist-common ${SOONG_OUT}/dist-arm64
     cat > ${SOONG_OUT}/soong.variables.tmp << EOF
 {
     "Allow_missing_dependencies": true,
-    "HostArch":"x86_64",
+    ${primary_arch}
     ${secondary_arch}
     ${cross_compile}
     "HostMusl": $use_musl,
@@ -182,20 +212,29 @@ EOF
     fi
 
     go_binaries="${SOONG_GO_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
-    binaries="${SOONG_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
-    asan_binaries="${SOONG_ASAN_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
-    jars="${SOONG_JAVA_LIBRARIES[@]/#/${SOONG_HOST_OUT}/framework/}"
-    wrappers="${SOONG_JAVA_WRAPPERS[@]/#/${SOONG_HOST_OUT}/bin/}"
+    if [ -n "${build_native}" ]; then
+        binaries="${SOONG_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
+        asan_binaries="${SOONG_ASAN_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
+        tests="${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests \
+             ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests \
+             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
+             ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test \
+             ${SOONG_HOST_OUT}/nativetest64/par_test/par_test"
 
-    # TODO: When we have a better method of extracting zips from Soong, use that.
-    py3_stdlib_zip="${SOONG_OUT}/.intermediates/external/python/cpython3/Lib/py3-stdlib-zip/gen/py3-stdlib.zip"
+        # TODO: When we have a better method of extracting zips from Soong, use that.
+        py3_stdlib_zip="${SOONG_OUT}/.intermediates/external/python/cpython3/Lib/py3-stdlib-zip/gen/py3-stdlib.zip"
+    fi
+    if [ -n "${build_java}" ]; then
+        jars="${SOONG_JAVA_LIBRARIES[@]/#/${SOONG_HOST_OUT}/framework/}"
+        wrappers="${SOONG_JAVA_WRAPPERS[@]/#/${SOONG_HOST_OUT}/bin/}"
+    fi
 
     musl_x86_sysroot=""
     musl_x86_64_sysroot=""
     musl_arm_sysroot=""
     musl_arm64_sysroot=""
     cross_binaries=""
-    if [[ ${use_musl} = "true" ]]; then
+    if [[ ${use_musl} = "true" && -n "${build_arm64_cross_musl}" ]]; then
         binaries="${binaries} ${SOONG_MUSL_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
         musl_x86_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_x86/gen/libc_musl_sysroot.zip"
         musl_x86_64_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_x86_64/gen/libc_musl_sysroot.zip"
@@ -222,58 +261,61 @@ EOF
         ${musl_x86_64_sysroot} \
         ${musl_arm_sysroot} \
         ${musl_arm64_sysroot} \
-        ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests \
-        ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests \
-        ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
-        ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test \
-        ${SOONG_HOST_OUT}/nativetest64/par_test/par_test \
+        ${tests} \
         soong_docs
 
-    # Run ninja tests
-    ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
+    if [ -n "${build_native}" ]; then
+        # Run ninja tests
+        ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test
 
-    # Run n2 tests
-    timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
-    N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
+        # Run n2 tests
+        timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests
+        N2_PATH=${SOONG_HOST_OUT}/bin/n2 timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/n2_e2e_tests/n2_e2e_tests
 
-    # Run ckati tests
-    ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
+        # Run ckati tests
+        ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
 
-    # Run python par/py*-cmd tests
-    ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
+        # Run python par/py*-cmd tests
+        ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
+    fi
 
     # Copy arch-specific binaries
     mkdir -p ${SOONG_OUT}/dist/bin
     cp ${go_binaries} ${binaries} ${SOONG_OUT}/dist/bin/
-    cp -R ${SOONG_HOST_OUT}/lib* ${SOONG_OUT}/dist/
+    for i in $(ls -d ${SOONG_HOST_OUT}/lib* 2> /dev/null); do
+        cp -R ${i} ${SOONG_OUT}/dist/
+    done
 
     # Copy cross-compiled binaries
-    if [[ ${use_musl} = "true" ]]; then
+    if [[ "${use_musl}" = "true" && -n "${build_arm64_cross_musl}" ]]; then
         mkdir -p ${SOONG_OUT}/dist-arm64/bin
         cp ${cross_binaries} ${SOONG_OUT}/dist-arm64/bin/
         cp -R ${SOONG_HOST_ARM_OUT}/lib* ${SOONG_OUT}/dist-arm64/
     fi
 
-    # Copy jars and wrappers
-    mkdir -p ${SOONG_OUT}/dist-common/{bin,flex,framework,py3-stdlib}
-    cp ${wrappers} ${SOONG_OUT}/dist-common/bin
-    cp ${jars} ${SOONG_OUT}/dist-common/framework
+    if [ -n "${build_java}" ]; then
+        # Copy jars and wrappers
+        mkdir -p ${SOONG_OUT}/dist-common/{bin,flex,framework,py3-stdlib}
+        cp ${wrappers} ${SOONG_OUT}/dist-common/bin
+        cp ${jars} ${SOONG_OUT}/dist-common/framework
+    fi
 
-    cp -r external/bison/data ${SOONG_OUT}/dist-common/bison
-    cp external/bison/NOTICE ${SOONG_OUT}/dist-common/bison/
-    cp -r external/flex/src/FlexLexer.h ${SOONG_OUT}/dist-common/flex/
-    cp external/flex/NOTICE ${SOONG_OUT}/dist-common/flex/
+    if [ -n "${build_native}" ]; then
+        cp -r external/bison/data ${SOONG_OUT}/dist-common/bison
+        cp external/bison/NOTICE ${SOONG_OUT}/dist-common/bison/
+        cp -r external/flex/src/FlexLexer.h ${SOONG_OUT}/dist-common/flex/
+        cp external/flex/NOTICE ${SOONG_OUT}/dist-common/flex/
 
-    ${SOONG_OUT}/dist/bin/zip2zip -i ${py3_stdlib_zip} -o ${OUT_DIR}/py3-stdlib.zip "**/*:py3-stdlib/"
-    cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-stdlib/
+        ${SOONG_OUT}/dist/bin/zip2zip -i ${py3_stdlib_zip} -o ${OUT_DIR}/py3-stdlib.zip "**/*:py3-stdlib/"
+        cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-stdlib/
+    fi
 
-    if [[ ${use_musl} = "true" ]]; then
+    if [[ "${use_musl}" = "true" && -n "${build_arm64_cross_musl}" ]]; then
         cp ${musl_x86_64_sysroot} ${SOONG_OUT}/musl-sysroot-x86_64-unknown-linux-musl.zip
         cp ${musl_x86_sysroot} ${SOONG_OUT}/musl-sysroot-i686-unknown-linux-musl.zip
         cp ${musl_arm_sysroot} ${SOONG_OUT}/musl-sysroot-arm-unknown-linux-musleabihf.zip
         cp ${musl_arm64_sysroot} ${SOONG_OUT}/musl-sysroot-aarch64-unknown-linux-musl.zip
     fi
-
 
     if [[ $OS == "linux" && -n "${build_asan}" ]]; then
         # Build ASAN versions
@@ -318,14 +360,16 @@ EOF
     # Package arch-specific prebuilts
     ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-prebuilts.zip -C ${SOONG_OUT}/dist -D ${SOONG_OUT}/dist
 
-    if [[ ${use_musl} = "true" ]]; then
+    if [[ ${use_musl} = "true" && -n "${build_arm64_cross_musl}" ]]; then
         # Package cross-compiled prebuilts
         ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-arm64-prebuilts.zip -C ${SOONG_OUT}/dist-arm64 -D ${SOONG_OUT}/dist-arm64
     fi
 
-    # Package common prebuilts
-    ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-common-prebuilts.tmp.zip -C ${SOONG_OUT}/dist-common -D ${SOONG_OUT}/dist-common
-    ${SOONG_OUT}/dist/bin/merge_zips ${OUT_DIR}/build-common-prebuilts.zip ${OUT_DIR}/build-common-prebuilts.tmp.zip ${OUT_DIR}/py3-stdlib.zip
+    if [[ -n "${build_java}" || -n "${build_native}" ]]; then
+        # Package common prebuilts
+        ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-common-prebuilts.tmp.zip -C ${SOONG_OUT}/dist-common -D ${SOONG_OUT}/dist-common
+        ${SOONG_OUT}/dist/bin/merge_zips ${OUT_DIR}/build-common-prebuilts.zip ${OUT_DIR}/build-common-prebuilts.tmp.zip ${OUT_DIR}/py3-stdlib.zip
+    fi
 fi
 
 if [ -z "${skip_soong_tests}" ]; then
@@ -341,8 +385,8 @@ if [ -n "${build_go}" ]; then
     rm -f ${GO_OUT}/update_prebuilts.sh
     (
         cd ${GO_OUT}/src
-        export GOROOT_BOOTSTRAP=${TOP}/prebuilts/go/${OS}-x86
-        export GOROOT_FINAL=./prebuilts/go/${OS}-x86
+        export GOROOT_BOOTSTRAP=${TOP}/prebuilts/go/${OS}-${ARCH}
+        export GOROOT_FINAL=./prebuilts/go/${OS}-${ARCH}
         export GO_TEST_TIMEOUT_SCALE=100
         export GODEBUG=installgoroot=all
         ./make.bash
@@ -358,9 +402,11 @@ if [ -n "${DIST_DIR}" ]; then
 
     if [ -n "${build_soong}" ]; then
         cp ${OUT_DIR}/build-prebuilts.zip ${DIST_DIR}/
-        cp ${OUT_DIR}/build-common-prebuilts.zip ${DIST_DIR}/
+        if [ -n "${build_java}" ]; then
+            cp ${OUT_DIR}/build-common-prebuilts.zip ${DIST_DIR}/
+        fi
         cp ${SOONG_OUT}/docs/*.html ${DIST_DIR}/
-        if [ ${use_musl} = "true" ]; then
+        if [[ ${use_musl} = "true" && -n "${build_arm64_cross_musl}" ]]; then
             cp ${OUT_DIR}/build-arm64-prebuilts.zip ${DIST_DIR}/
 
             cp ${SOONG_OUT}/musl-sysroot-x86_64-unknown-linux-musl.zip ${DIST_DIR}/
