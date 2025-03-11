@@ -167,7 +167,7 @@ cc_prebuilt_binary {
             srcs: ["linux-x86/bin/py3-launcher64"],
         },
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher64"],
+            srcs: ["linux-arm64/bin/py3-launcher64"],
         },
         musl_x86_64: {
             srcs: ["linux_musl-x86/bin/py3-launcher64"],
@@ -196,7 +196,7 @@ cc_prebuilt_binary {
     stl: "none",
     target: {
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher-static64"],
+            srcs: ["linux-arm64/bin/py3-launcher-static64"],
         },
         musl_x86_64: {
             srcs: ["linux_musl-x86/bin/py3-launcher-static64"],
@@ -221,7 +221,7 @@ cc_prebuilt_binary {
             srcs: ["linux-x86/bin/py3-launcher-autorun64"],
         },
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher-autorun64"],
+            srcs: ["linux-arm64/bin/py3-launcher-autorun64"],
         },
         musl_x86_64: {
             srcs: ["linux_musl-x86/bin/py3-launcher-autorun64"],
@@ -250,7 +250,7 @@ cc_prebuilt_binary {
     stl: "none",
     target: {
         musl_arm64: {
-            srcs: ["linux_musl-arm64/bin/py3-launcher-autorun-static64"],
+            srcs: ["linux-arm64/bin/py3-launcher-autorun-static64"],
         },
         musl_x86_64: {
             srcs: ["linux_musl-x86/bin/py3-launcher-autorun-static64"],
@@ -274,7 +274,7 @@ filegroup {
 python_library_host {
     name: "py3-stdlib-prebuilt",
     is_internal: true,
-    pkg_path: "python3.11",
+    pkg_path: "python3.13",
     srcs: [":py3-stdlib-prebuilt-srcs"],
 }
 
