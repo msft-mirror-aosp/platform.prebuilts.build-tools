@@ -119,6 +119,7 @@ if [ -n "${build_soong}" ]; then
     ${secondary_arch}
     ${cross_compile}
     "HostMusl": $use_musl,
+    "StripByDefault": true,
     "VendorVars": {
         "cpython3": {
             "force_build_host": "true"
