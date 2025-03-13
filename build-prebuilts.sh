@@ -296,7 +296,7 @@ EOF
 
     if [ -n "${build_java}" ]; then
         # Copy jars and wrappers
-        mkdir -p ${SOONG_OUT}/dist-common/{bin,flex,framework,py3-stdlib}
+        mkdir -p ${SOONG_OUT}/dist-common/{bin,flex,framework,py3-stdlib,py3-headers}
         cp ${wrappers} ${SOONG_OUT}/dist-common/bin
         cp ${jars} ${SOONG_OUT}/dist-common/framework
     fi
@@ -309,6 +309,21 @@ EOF
 
         ${SOONG_OUT}/dist/bin/zip2zip -i ${py3_stdlib_zip} -o ${OUT_DIR}/py3-stdlib.zip "**/*:py3-stdlib/"
         cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-stdlib/
+        py3_headers=(
+            ${TOP}/external/python/cpython3/Include
+            ${TOP}/external/python/cpython3/android/linux_x86_64/pyconfig
+            ${TOP}/external/python/cpython3/android/linux_arm64/pyconfig
+            ${TOP}/external/python/cpython3/android/bionic/pyconfig
+            ${TOP}/external/python/cpython3/android/darwin/pyconfig
+        )
+        for py3_header in ${py3_headers[@]}; do
+            REL_SUBDIR=${py3_header#*/cpython3/}
+            REL_SUBDIR=$(dirname ${REL_SUBDIR})
+            mkdir -p ${SOONG_OUT}/dist-common/py3-headers/${REL_SUBDIR} || true
+            cp -r ${py3_header} ${SOONG_OUT}/dist-common/py3-headers/${REL_SUBDIR}/
+        done
+        rm -rf ${SOONG_OUT}/dist-common/py3-headers/Include/internal
+        cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-headers/
     fi
 
     if [[ "${use_musl}" = "true" && -n "${build_arm64_cross_musl}" ]]; then
