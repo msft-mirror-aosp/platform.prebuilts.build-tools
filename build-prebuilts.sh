@@ -322,7 +322,6 @@ EOF
             mkdir -p ${SOONG_OUT}/dist-common/py3-headers/${REL_SUBDIR} || true
             cp -r ${py3_header} ${SOONG_OUT}/dist-common/py3-headers/${REL_SUBDIR}/
         done
-        rm -rf ${SOONG_OUT}/dist-common/py3-headers/Include/internal
         cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-headers/
     fi
 
