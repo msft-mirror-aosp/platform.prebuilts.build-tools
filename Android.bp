@@ -286,7 +286,10 @@ cc_prebuilt_library_headers {
             export_include_dirs: ["common/py3-headers/android/linux_arm64/pyconfig"],
         },
     },
-    visibility: ["//external/grpc-grpc:__subpackages__"],
+    visibility: [
+        "//external/grpc-grpc:__subpackages__",
+        "//external/python/cpython3",
+    ],
     // Use the prebuilts for most branches
     prefer: select(soong_config_variable("cpython3", "force_build_host"), {
         true: false,
