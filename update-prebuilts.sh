@@ -17,8 +17,8 @@
 if [ -z $1 ]; then
     echo "usage: $0 <build number>"
     echo
-    echo "The build number should be from a *snap* [not a buildkick] of aosp-build-tools-release."
-    echo "https://android-build.googleplex.com/coastguard/branch/aosp-build-tools-release/#/request/"
+    echo "The build number should be from a *snap* [not a buildkick] of git_main-build-tools-release."
+    echo "https://android-build.googleplex.com/coastguard/branch/git_main-build-tools-release/#/request/"
     echo
     echo "Don't forget to repo start first!"
     exit 1
@@ -43,7 +43,7 @@ function finish {
 trap finish EXIT
 
 function fetch_artifact() {
-    /google/data/ro/projects/android/fetch_artifact --branch aosp-build-tools-release --bid ${BUILD_NUMBER} --target $1 "$2" "$3"
+    /google/data/ro/projects/android/fetch_artifact --bid ${BUILD_NUMBER} --target $1 "$2" "$3"
 }
 
 fetch_artifact linux build-prebuilts.zip "${tmpdir}/linux.zip"
