@@ -17,8 +17,8 @@
 if [ -z $1 ]; then
     echo "usage: $0 <build number>"
     echo
-    echo "The build number should be from a *snap* [not a buildkick] of aosp-build-tools-release."
-    echo "https://android-build.googleplex.com/coastguard/branch/aosp-build-tools-release/#/request/"
+    echo "The build number should be from a *snap* [not a buildkick] of git_main-build-tools-release."
+    echo "https://android-build.googleplex.com/coastguard/branch/git_main-build-tools-release/#/request/"
     echo
     echo "Don't forget to repo start first!"
     exit 1
@@ -43,7 +43,9 @@ function finish {
 trap finish EXIT
 
 function fetch_artifact() {
-    /google/data/ro/projects/android/fetch_artifact --branch aosp-build-tools-release --bid ${BUILD_NUMBER} --target $1 "$2" "$3"
+    # Include the -branch argument to fetch_artifact to enforce that the
+    # prebuilts come from the release branch and not the dev branch.
+    /google/data/ro/projects/android/fetch_artifact --branch git_main-build-tools-release --bid ${BUILD_NUMBER} --target $1 "$2" "$3"
 }
 
 fetch_artifact linux build-prebuilts.zip "${tmpdir}/linux.zip"
@@ -78,6 +80,6 @@ cp -f "${tmpdir}/manifest.xml" manifest.xml
 git add manifest.xml linux-x86 linux-arm64 linux_musl-x86 darwin-x86 common sysroots/x86_64-unknown-linux-musl sysroots/i686-unknown-linux-musl sysroots/aarch64-unknown-linux-musl sysroots/arm-unknown-linux-musleabihf
 git commit -m "Update build-tools to ab/${BUILD_NUMBER}
 
-https://ci.android.com/builds/branches/aosp-build-tools-release/grid?head=${BUILD_NUMBER}&tail=${BUILD_NUMBER}
+http://ab/${BUILD_NUMBER}
 
 Test: treehugger"
