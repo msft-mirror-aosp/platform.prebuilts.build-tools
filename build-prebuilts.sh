@@ -58,7 +58,7 @@ while getopts ":-:" opt; do
         -)
             case "${OPTARG}" in
                 resume) clean= ;;
-                musl) use_musl=true; build_arm64_cross_musl=1 ;;
+                musl) use_musl=true; build_arm64_cross_musl=1; build_arm64_bootstrap_go=1 ;;
                 skip-go) unset build_go ;;
                 skip-soong) unset build_soong ;;
                 skip-soong-tests) skip_soong_tests=--skip-soong-tests ;;
@@ -423,6 +423,23 @@ if [ -n "${build_go}" ]; then
         GOROOT=$(pwd)/.. ../bin/go install -race std
     )
     ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/go.zip -C ${GO_OUT} -D ${GO_OUT}
+
+    if [ -n "${build_arm64_bootstrap_go}" ]; then
+        GO_ARM64_OUT=${OUT_DIR}/obj/go-linux-arm64-bootstrap
+        rm -rf ${GO_ARM64_OUT}
+        (
+            cd ${GO_OUT}/src
+            export GOROOT_BOOTSTRAP=${TOP}/prebuilts/go/${OS}-${ARCH}
+            export GOROOT_FINAL=./prebuilts/go/linux-arm64
+            export GO_TEST_TIMEOUT_SCALE=100
+            export GODEBUG=installgoroot=all
+
+            GOOS=linux GOARCH=arm64 ./bootstrap.bash
+            rm -rf ../pkg/bootstrap
+            rm -rf ../pkg/obj
+        )
+        ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/go-arm64.zip -C ${GO_ARM64_OUT} -D ${GO_ARM64_OUT}
+    fi
 fi
 
 if [ -n "${DIST_DIR}" ]; then
@@ -445,5 +462,8 @@ if [ -n "${DIST_DIR}" ]; then
     fi
     if [ -n "${build_go}" ]; then
         cp ${OUT_DIR}/go.zip ${DIST_DIR}/
+        if [ -n "${build_arm64_bootstrap_go}" ]; then
+            cp ${OUT_DIR}/go-arm64.zip ${DIST_DIR}/
+        fi
     fi
 fi
