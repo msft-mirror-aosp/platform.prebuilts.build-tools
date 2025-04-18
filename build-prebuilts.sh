@@ -397,7 +397,7 @@ if [ -n "${build_go}" ]; then
     rm -rf ${GO_OUT}
     mkdir -p ${GO_OUT}
     cp -a ${TOP}/toolchain/go/* ${GO_OUT}/
-    rm -f ${GO_OUT}/update_prebuilts.sh
+    rm -f ${GO_OUT}/update-prebuilts.sh
     (
         if [[ ${OS} = linux ]]; then
             # Building with the race detector enabled uses the host linker, set the
