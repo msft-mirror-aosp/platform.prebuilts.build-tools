@@ -400,16 +400,20 @@ if [ -n "${build_go}" ]; then
     rm -f ${GO_OUT}/update-prebuilts.sh
     (
         if [[ ${OS} = linux ]]; then
-            # Building with the race detector enabled uses the host linker, set the
-            # path to use the hermetic one.
-            CLANG_VERSION=$(build/soong/scripts/get_clang_version.py)
-            export CC="${TOP}/prebuilts/clang/host/${OS}-x86/${CLANG_VERSION}/bin/clang"
-            export CXX="${TOP}/prebuilts/clang/host/${OS}-x86/${CLANG_VERSION}/bin/clang++"
-            glibc_dir="${TOP}/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8"
-            export CGO_CFLAGS="--sysroot ${glibc_dir}/sysroot/"
-            export CGO_CPPFLAGS="--sysroot ${glibc_dir}/sysroot/"
-            export CGO_CXXFLAGS="--sysroot ${glibc_dir}/sysroot/"
-            export CGO_LDFLAGS="--sysroot ${glibc_dir}/sysroot/ -B ${glibc_dir}/lib/gcc/x86_64-linux/4.8.3 -L ${glibc_dir}/lib/gcc/x86_64-linux/4.8.3 -L ${glibc_dir}/x86_64-linux/lib64"
+                # There's no hermetic clang toolchain prebuilts for arm64
+            if [[ ${ARCH} = x86 ]]; then
+                # Building with the race detector enabled uses the host linker, set the
+                # path to use the hermetic one.
+                CLANG_VERSION=$(build/soong/scripts/get_clang_version.py)
+                export CC="${TOP}/prebuilts/clang/host/${OS}-x86/${CLANG_VERSION}/bin/clang"
+                export CXX="${TOP}/prebuilts/clang/host/${OS}-x86/${CLANG_VERSION}/bin/clang++"
+                glibc_dir="${TOP}/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.17-4.8"
+                export CGO_CFLAGS="--sysroot ${glibc_dir}/sysroot/"
+                export CGO_CPPFLAGS="--sysroot ${glibc_dir}/sysroot/"
+                export CGO_CXXFLAGS="--sysroot ${glibc_dir}/sysroot/"
+                export CGO_LDFLAGS="--sysroot ${glibc_dir}/sysroot/ -B ${glibc_dir}/lib/gcc/x86_64-linux/4.8.3 -L ${glibc_dir}/lib/gcc/x86_64-linux/4.8.3 -L ${glibc_dir}/x86_64-linux/lib64"
+                export CGO_ENABLED=1
+            fi
         fi
         cd ${GO_OUT}/src
         export GOROOT_BOOTSTRAP=${TOP}/prebuilts/go/${OS}-${ARCH}
@@ -420,7 +424,9 @@ if [ -n "${build_go}" ]; then
         ./make.bash
         rm -rf ../pkg/bootstrap
         rm -rf ../pkg/obj
-        GOROOT=$(pwd)/.. ../bin/go install -race std
+        if [ "${CGO_ENABLED}" = "1" ]; then
+            GOROOT=$(pwd)/.. ../bin/go install -race std
+        fi
     )
     ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/go.zip -C ${GO_OUT} -D ${GO_OUT}
 
