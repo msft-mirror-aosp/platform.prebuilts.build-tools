@@ -148,6 +148,7 @@ EOF
         soong_zip
         runextractor
         rust_extractor
+        rust_project_to_kzip
         zip2zip
     )
     SOONG_BINARIES=(
