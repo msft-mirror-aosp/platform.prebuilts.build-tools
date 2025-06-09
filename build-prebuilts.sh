@@ -106,6 +106,14 @@ fi
 # Use toybox and other prebuilts even outside of the build (test running, go, etc)
 export PATH=${TOP}/prebuilts/build-tools/path/${OS}-${ARCH}:$PATH
 
+function release_config_json() {
+    # Dump the release config in json.
+    # `build-flag` is standalone, and can be used instead of `release-config`.
+    ${TOP}/build/soong/bin/build-flag --quiet --release=trunk_staging \
+    --use-get-build-var=false --map build/release/release_config_map.textproto \
+    get --json --all
+}
+
 if [ -n "${build_soong}" ]; then
     SOONG_OUT=${OUT_DIR}/soong
     SOONG_HOST_OUT=${OUT_DIR}/host/${OS}-${ARCH}
@@ -120,6 +128,9 @@ if [ -n "${build_soong}" ]; then
     ${cross_compile}
     "HostMusl": $use_musl,
     "StripByDefault": true,
+    "BuildFlags": {
+        $(release_config_json| sed '2,$s/^/        /')
+    },
     "VendorVars": {
         "cpython3": {
             "force_build_host": "true"
