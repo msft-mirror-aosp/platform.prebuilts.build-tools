@@ -184,6 +184,7 @@ EOF
         py3-cmd
         py3-launcher64
         py3-launcher-autorun64
+        rkati
         tool_event_logger
         toybox
         xz
@@ -231,6 +232,7 @@ EOF
              ${SOONG_HOST_OUT}/nativetest64/n2_unit_tests/n2_unit_tests \
              ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
              ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test \
+             ${SOONG_HOST_OUT}/nativetest64/rkati_unit_tests/rkati_unit_tests \
              ${SOONG_HOST_OUT}/nativetest64/par_test/par_test"
 
         # TODO: When we have a better method of extracting zips from Soong, use that.
@@ -286,6 +288,9 @@ EOF
 
         # Run ckati tests
         ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
+
+        # Run rkati tests
+        timeout -v -k 10 300 ${SOONG_HOST_OUT}/nativetest64/rkati_unit_tests/rkati_unit_tests
 
         # Run python par/py*-cmd tests
         ANDROID_HOST_OUT=${PWD}/${SOONG_HOST_OUT} build/soong/python/tests/runtest.sh
