@@ -30,6 +30,7 @@ py_runtime(
     files = ["linux-x86/bin/py3-cmd"],
     interpreter = "linux-x86/bin/py3-cmd",
     python_version = "PY3",
+    supports_build_time_venv = False,
     visibility = ["//visibility:public"],
 )
 
@@ -54,6 +55,7 @@ py_runtime(
     ],
     interpreter = "linux_musl-x86/bin/py3-cmd",
     python_version = "PY3",
+    supports_build_time_venv = False,
     visibility = ["//visibility:private"],
 )
 
