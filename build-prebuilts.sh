@@ -61,7 +61,7 @@ while getopts ":-:" opt; do
                 musl) use_musl=true; build_arm64_cross_musl=1; build_arm64_bootstrap_go=1 ;;
                 skip-go) unset build_go ;;
                 skip-soong) unset build_soong ;;
-                skip-soong-tests) skip_soong_tests=--skip-soong-tests ;;
+                skip-soong-tests) ;;
                 skip-asan) unset build_asan ;;
                 *) echo "Unknown option --${OPTARG}"; exit 1 ;;
             esac;;
@@ -79,7 +79,6 @@ elif [[ ${ARCH} = arm64 ]]; then
     unset build_java
     unset build_asan
     unset build_arm64_cross_musl
-    skip_soong_tests=--skip-soong-tests
 fi
 
 secondary_arch=""
@@ -264,7 +263,7 @@ EOF
     fi
 
     # Build everything
-    build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
+    build/soong/soong_ui.bash --make-mode --soong-only --skip-config \
         ${go_binaries} \
         ${binaries} \
         ${cross_binaries} \
@@ -371,7 +370,7 @@ EOF
         rm -rf ${SOONG_HOST_OUT}
 
         # Build everything with ASAN
-        build/soong/soong_ui.bash --make-mode --soong-only --skip-config ${skip_soong_tests} \
+        build/soong/soong_ui.bash --make-mode --soong-only --skip-config \
             ${asan_binaries} \
             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
             ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
@@ -401,10 +400,6 @@ EOF
         ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-common-prebuilts.tmp.zip -C ${SOONG_OUT}/dist-common -D ${SOONG_OUT}/dist-common
         ${SOONG_OUT}/dist/bin/merge_zips ${OUT_DIR}/build-common-prebuilts.zip ${OUT_DIR}/build-common-prebuilts.tmp.zip ${OUT_DIR}/py3-stdlib.zip
     fi
-fi
-
-if [ -z "${skip_soong_tests}" ]; then
-    build/soong/scripts/run-soong-tests-with-go-tools.sh
 fi
 
 # Go
