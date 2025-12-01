@@ -127,9 +127,7 @@ if [ -n "${build_soong}" ]; then
     ${cross_compile}
     "HostMusl": $use_musl,
     "StripByDefault": true,
-    "BuildFlags": {
-        $(release_config_json| sed '2,$s/^/        /')
-    },
+    $(release_config_json| sed '2,$s/^/    /; $s/$/,/')
     "VendorVars": {
         "cpython3": {
             "force_build_host": "true"
