@@ -421,7 +421,10 @@ if [ -n "${build_go}" ]; then
                 export CGO_CPPFLAGS="--sysroot ${glibc_dir}/sysroot/"
                 export CGO_CXXFLAGS="--sysroot ${glibc_dir}/sysroot/"
                 export CGO_LDFLAGS="--sysroot ${glibc_dir}/sysroot/ -B ${glibc_dir}/lib/gcc/x86_64-linux/4.8.3 -L ${glibc_dir}/lib/gcc/x86_64-linux/4.8.3 -L ${glibc_dir}/x86_64-linux/lib64"
-                export CGO_ENABLED=1
+                # Set CGO_ENABLED=0 so that the resulting toolchain doesn't default
+                # to building with CGO enabled.
+                export CGO_ENABLED=0
+                cgo_supported=1
             fi
         fi
         cd ${GO_OUT}/src
@@ -433,8 +436,8 @@ if [ -n "${build_go}" ]; then
         ./make.bash
         rm -rf ../pkg/bootstrap
         rm -rf ../pkg/obj
-        if [ "${CGO_ENABLED}" = "1" ]; then
-            GOROOT=$(pwd)/.. ../bin/go install -race std
+        if [ "${cgo_supported}" = "1" ]; then
+            GOROOT=$(pwd)/.. CGO_ENABLED=1 ../bin/go install -race std
         fi
     )
     ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/go.zip -C ${GO_OUT} -D ${GO_OUT}
