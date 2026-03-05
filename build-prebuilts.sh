@@ -45,6 +45,15 @@ aarch64)
     ;;
 esac
 
+if [[ "$OS" = "darwin" ]]; then
+    # Arm darwin hosts can use x86 tools via rosetta 2.
+    # Currently, our builds for universal x86+arm binaries
+    # require building as if the host was x86, so keep using
+    # x86 here. However you can get native arm64 binary builds
+    # by removing this and making relatively few tweaks to soong.
+    ARCH="x86"
+fi
+
 build_soong=1
 build_asan=1
 build_native=1
