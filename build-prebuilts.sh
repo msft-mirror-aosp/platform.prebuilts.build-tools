@@ -36,7 +36,7 @@ case "$UNAME_ARCH" in
 x86_64)
     ARCH='x86'
     ;;
-aarch64)
+aarch64 | arm64)
     ARCH="arm64"
     ;;
 *)
