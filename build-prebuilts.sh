@@ -191,6 +191,7 @@ EOF
         py3-launcher64
         py3-launcher-autorun64
         rkati
+        sh
         tool_event_logger
         toybox
         xz
