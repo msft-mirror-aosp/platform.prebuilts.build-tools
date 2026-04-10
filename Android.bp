@@ -314,6 +314,7 @@ cc_prebuilt_library_headers {
     visibility: [
         "//external/grpc-grpc:__subpackages__",
         "//external/python/cpython3",
+        "//external/python/pillow",
         "//external/mypy",
     ],
     // Use the prebuilts for most branches
