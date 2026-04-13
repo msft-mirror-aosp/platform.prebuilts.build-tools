@@ -314,7 +314,7 @@ cc_prebuilt_library_headers {
     visibility: [
         "//external/grpc-grpc:__subpackages__",
         "//external/python/cpython3",
-        "//external/mypy",
+        "//external/python/mypy",
     ],
     // Use the prebuilts for most branches
     prefer: select(soong_config_variable("cpython3", "force_build_host"), {
