@@ -114,6 +114,10 @@ fi
 # Use toybox and other prebuilts even outside of the build (test running, go, etc)
 export PATH=${TOP}/prebuilts/build-tools/path/${OS}-${ARCH}:$PATH
 
+# Split all soong variants by default.
+# This ensures that the musl variants are not missed from packaging.
+export SOONG_SPLIT_ALL_VARIANTS=true
+
 function release_config_json() {
     # Dump the release config in json.
     # `build-flag` is standalone, and can be used instead of `release-config`.
