@@ -80,20 +80,23 @@ prebuilt_build_tool {
     licenses: ["prebuilts_build-tools_bison_license"],
     export_to_make_var: "BISON",
     enabled: false,
-    arch: {
-        x86_64: {
-            enabled: true,
-        },
-    },
     target: {
         darwin: {
             src: "darwin-x86/bin/bison",
             deps: ["darwin-x86/lib64/libc++.dylib"],
+            enabled: true,
         },
-        linux: {
+        host_linux_x86_64: {
             src: "linux-x86/bin/bison",
             deps: ["linux-x86/lib64/libc++.so"],
+            enabled: true,
         },
+        linux_musl_arm64: {
+            src: "linux-arm64/bin/bison",
+            deps: ["linux-arm64/lib64/libc++.so"],
+            enabled: true,
+        },
+
     },
 }
 
@@ -101,18 +104,19 @@ prebuilt_build_tool {
     name: "flex",
     export_to_make_var: "LEX",
     enabled: false,
-    arch: {
-        x86_64: {
-            enabled: true,
-        },
-    },
     licenses: ["prebuilts_build-tools_flex_license"],
     target: {
         darwin: {
             src: "darwin-x86/bin/flex",
+            enabled: true,
         },
-        linux: {
+        host_linux_x86_64: {
             src: "linux-x86/bin/flex",
+            enabled: true,
+        },
+        musl_arm64: {
+            src: "linux-arm64/bin/flex",
+            enabled: true,
         },
     },
 }
@@ -121,18 +125,19 @@ prebuilt_build_tool {
     name: "m4",
     export_to_make_var: "M4",
     enabled: false,
-    arch: {
-        x86_64: {
-            enabled: true,
-        },
-    },
     licenses: ["prebuilts_build-tools_gnu_license"],
     target: {
         darwin: {
             src: "darwin-x86/bin/m4",
+            enabled: true,
         },
-        linux: {
+        host_linux_x86_64: {
             src: "linux-x86/bin/m4",
+            enabled: true,
+        },
+        musl_arm64: {
+            src: "linux-arm64/bin/m4",
+            enabled: true,
         },
     },
 }
@@ -140,17 +145,18 @@ prebuilt_build_tool {
 prebuilt_build_tool {
     name: "make",
     enabled: false,
-    arch: {
-        x86_64: {
-            enabled: true,
-        },
-    },
     target: {
         darwin: {
             src: "darwin-x86/bin/make",
+            enabled: true,
         },
-        linux: {
+        host_linux_x86_64: {
             src: "linux-x86/bin/make",
+            enabled: true,
+        },
+        linux_musl_arm64: {
+            src: "linux-arm64/bin/make",
+            enabled: true,
         },
     },
     visibility: ["//vendor:__subpackages__"],
