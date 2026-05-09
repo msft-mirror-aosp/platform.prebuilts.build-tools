@@ -161,6 +161,15 @@ EOF
     else
         mv -f ${SOONG_OUT}/soong.variables.tmp ${SOONG_OUT}/soong.variables
     fi
+
+    # soong_ui needs a copy of the release config variables because
+    # --skip-config prevents getting them from the product config.
+cat > ${SOONG_OUT}/soong_ui.release_config.json <<EOF
+{
+    $(release_config_json| sed '2,$s/^/    /')
+}
+EOF
+
     SOONG_GO_BINARIES=(
         bpfmt
         go_extractor
@@ -275,6 +284,7 @@ EOF
 
     # Build everything
     build/soong/soong_ui.bash --make-mode --soong-only --skip-config \
+        --release-config-json=${SOONG_OUT}/soong_ui.release_config.json \
         ${go_binaries} \
         ${binaries} \
         ${cross_binaries} \
