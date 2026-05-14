@@ -187,6 +187,7 @@ EOF
         bison
         bloaty
         brotli
+        build_sdk_bin
         bzip2
         ckati
         edit_monitor
