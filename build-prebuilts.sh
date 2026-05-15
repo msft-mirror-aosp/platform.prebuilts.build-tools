@@ -184,6 +184,7 @@ EOF
         aconfig
         acp
         aidl
+        bash
         bison
         bloaty
         brotli
