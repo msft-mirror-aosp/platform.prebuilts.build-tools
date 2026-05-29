@@ -5,15 +5,15 @@
 
   <default revision="build-tools-release" remote="goog" sync-j="4" />
 
-  <project path="build/make" name="platform/build" revision="268a6989313aa4ab09406ddb605a064e0dadd6db" upstream="build-tools-release">
+  <project path="build/make" name="platform/build" revision="cab0283842a327cac28199f3d131f5338f9d3950" upstream="build-tools-release">
     <linkfile dest="build/tools" src="tools" />
 </project>
 
-  <project path="build/blueprint" name="platform/build/blueprint" revision="c79590516dbf25b51d8a6a8dbb831d7f1e788e61" upstream="build-tools-release" />
+  <project path="build/blueprint" name="platform/build/blueprint" revision="0c915ae0565100246b99d9102664f44adcac3f86" upstream="build-tools-release" />
 
-  <project path="build/release" name="platform/build/release" groups="pdk,tradefed,sysui-studio" revision="740d38a9e38b9607abe85e728b0eff1a475a2f21" upstream="build-tools-release" />
+  <project path="build/release" name="platform/build/release" groups="pdk,tradefed,sysui-studio" revision="67f3b8b7393c41de033b26d6aa87e3f9338faf14" upstream="build-tools-release" />
 
-  <project path="build/soong" name="platform/build/soong" revision="0372f168fbaf8f8f64dce7b6511cb9730abaf3f1" upstream="build-tools-release">
+  <project path="build/soong" name="platform/build/soong" revision="a71d98a5d3cc3d34d4b62618136d94b8f37bb7e8" upstream="build-tools-release">
     <linkfile dest="Android.bp" src="root.bp" />
 
     <linkfile dest="bootstrap.bash" src="bootstrap.bash" />
@@ -23,9 +23,9 @@
 
   <project path="external/pogreb" name="platform/external/pogreb" groups="pdk" revision="7cfe3f97aa13bd85f9de2ad80544eb130fd632e0" upstream="build-tools-release" />
 
-  <project path="packages/modules/common" name="platform/packages/modules/common" groups="pdk-cw-fs,pdk-fs" revision="a76e4e3ebb0ce8941e98eecbba880dda2312496f" upstream="build-tools-release" />
+  <project path="packages/modules/common" name="platform/packages/modules/common" groups="pdk-cw-fs,pdk-fs" revision="db2d5b56807f95c2c64df90b099614fb22c2b194" upstream="build-tools-release" />
 
-  <project path="prebuilts/build-tools" name="platform/prebuilts/build-tools" clone-depth="1" revision="619e5a674937dd2a7ee3700baadd1079bbf243cf" upstream="build-tools-release" />
+  <project path="prebuilts/build-tools" name="platform/prebuilts/build-tools" clone-depth="1" revision="0f1b5cb5ea64b0c5877e493e717e3d0800277d56" upstream="build-tools-release" />
 
   <project path="prebuilts/remoteexecution-client" name="platform/prebuilts/remoteexecution-client" groups="pdk" clone-depth="1" revision="1d08802b7887ce9f5a1b7cc3192c328caa8348e2" upstream="build-tools-release" />
 
@@ -53,17 +53,17 @@
 
   <project path="prebuilts/jdk/jdk8" name="platform/prebuilts/jdk/jdk8" clone-depth="1" revision="6cd518be7a7147ed5b1053edfbf66379bf5a45f9" upstream="build-tools-release" />
 
-  <project path="prebuilts/clang-tools" name="platform/prebuilts/clang-tools" clone-depth="1" revision="a6ecd271d4e0faec69f614ca9baa63ae92704875" upstream="build-tools-release" />
+  <project path="prebuilts/clang-tools" name="platform/prebuilts/clang-tools" clone-depth="1" revision="e849cee3fdeec0bc3e9d238b99bbc32038db3e65" upstream="build-tools-release" />
 
   <project path="prebuilts/misc" name="platform/prebuilts/misc" clone-depth="1" revision="34c0044a3e57898b905ea6ffddec92aebaedd0b7" upstream="build-tools-release" />
 
   <project path="prebuilts/tools" name="platform/prebuilts/tools" groups="pdk,tools" clone-depth="1" revision="c9302f0be9fcd11da9e5841d220c31cbc462ba2a" upstream="build-tools-release" />
 
-  <project path="prebuilts/sdk" name="platform/prebuilts/sdk" clone-depth="1" revision="de4754ee7a21904b9a0bba2eabefb07e29440244" upstream="build-tools-release" />
+  <project path="prebuilts/sdk" name="platform/prebuilts/sdk" clone-depth="1" revision="89b9ad2dff824e40f8ae9eb51f69531773a6cdb5" upstream="build-tools-release" />
 
-  <project path="bionic" name="platform/bionic" revision="ec1017a7ec4256f62de44fe19f1e689cf3ab5cff" upstream="build-tools-release" />
+  <project path="bionic" name="platform/bionic" revision="8b0f5ed3a1b3544e15562a996f791ef39a525c87" upstream="build-tools-release" />
 
-  <project path="development" name="platform/development" revision="5edbaebfda153e3d1c062e33ccd690391c86c159" upstream="build-tools-release" />
+  <project path="development" name="platform/development" revision="7199fb234c2f5c2015cef419eef1f19ab536f021" upstream="build-tools-release" />
 
   <project path="external/arm-optimized-routines" name="platform/external/arm-optimized-routines" revision="aa32e9dd97aeed24ea063643bddb174dfc9b4198" upstream="build-tools-release" />
 
@@ -115,7 +115,7 @@
 
   <project path="external/gson" name="platform/external/gson" groups="pdk" revision="c5d671de0aa005eb00dbb63d39d2d9f50a3f84c4" upstream="build-tools-release" />
 
-  <project path="external/icu" name="platform/external/icu" revision="57deac190d921d810a516235f2136e0c2dbfc8fe" upstream="build-tools-release" />
+  <project path="external/icu" name="platform/external/icu" revision="8285d5fda6bc16accb53af7dc2e853b812ca5431" upstream="build-tools-release" />
 
   <project path="external/javapoet" name="platform/external/javapoet" revision="21e1e047dea2100081a34c48fece7263cac4bf2f" upstream="build-tools-release" />
 
@@ -187,13 +187,13 @@
 
   <project path="external/zopfli" name="platform/external/zopfli" revision="11819beed09d56410fdf0fa476ada89d1251538c" upstream="build-tools-release" />
 
-  <project path="libcore" name="platform/libcore" revision="9e982db9d8b9306310acda359330c84b3dcb72a9" upstream="build-tools-release" />
+  <project path="libcore" name="platform/libcore" revision="001e9366cffbcd78366ddb017cd4f9661508f328" upstream="build-tools-release" />
 
   <project path="sdk" name="platform/sdk" revision="4a3a91b0cb5cc22a0c4b775845a57de0b447bc13" upstream="build-tools-release" />
 
-  <project path="system/apex" name="platform/system/apex" groups="pdk" revision="2a9da8c602657e09d2aa5b782cbde047fc784a29" upstream="build-tools-release" />
+  <project path="system/apex" name="platform/system/apex" groups="pdk" revision="060ca701ecb702f19b44b6775eb503916844bbc4" upstream="build-tools-release" />
 
-  <project path="system/core" name="platform/system/core" revision="e58e7092e161769a1436982ff0ed2f2d4ecf1208" upstream="build-tools-release" />
+  <project path="system/core" name="platform/system/core" revision="b3f480cb145bd8babf2e01e0d7fe5f43e850104b" upstream="build-tools-release" />
 
   <project path="system/libbase" name="platform/system/libbase" revision="4e97e9154eff16e8e91f64ff81f7892529a2e82a" upstream="build-tools-release" />
 
@@ -213,7 +213,7 @@
 
   <project path="tools/asuite" name="platform/tools/asuite" revision="a0828337ab62aad99a39a5f6c40c9cddb0f20da8" upstream="build-tools-release" />
 
-  <project path="art" name="platform/art" revision="3202013bb0fd4d46e324634e9ea3738812fb6d8a" upstream="build-tools-release" />
+  <project path="art" name="platform/art" revision="54488763282b8b8d15095e72fe4a7610a0da3429" upstream="build-tools-release" />
 
   <project path="build/kati" name="platform/build/kati" revision="0a4de9cb2e4e396620fcfe05a332703cb4ff8ab9" upstream="build-tools-release" />
 
@@ -241,7 +241,7 @@
 
   <project path="external/n2" name="platform/external/n2" revision="c89e3f7cf88f2e659bfc4b336e147d512f49394b" upstream="build-tools-release" />
 
-  <project path="external/ninja" name="platform/external/ninja" revision="4408be21f00fbf7bccea53eeb23efc7d4e3e4f7e" upstream="build-tools-release" />
+  <project path="external/ninja" name="platform/external/ninja" revision="fafeb2541443a6ff54733d2014055b939b8b6b3d" upstream="build-tools-release" />
 
   <project path="external/nsjail" name="platform/external/nsjail" revision="dcd86ea5ba7f9761e5eca215877bfa9807988763" upstream="build-tools-release" />
 
@@ -269,7 +269,7 @@
 
   <project name="toolchain/xz" revision="ab82f7a44f315f94ab45f0cf1c12f52a036fcec3" upstream="build-tools-release" />
 
-  <project path="external/rust/android-crates-io" name="platform/external/rust/android-crates-io" groups="pdk" revision="9c22f74ce401adf123f9f1463b39140927eefe2b" upstream="build-tools-release" />
+  <project path="external/rust/android-crates-io" name="platform/external/rust/android-crates-io" groups="pdk" revision="c5c8793157ab12e169fd5af89fa0fb190924a5b8" upstream="build-tools-release" />
 
   <project path="external/rust/crates/openssl" name="platform/external/rust/crates/openssl" groups="pdk" revision="c8d1ab46cb1cf89f607cec262da9d0bf0d9b2aa0" upstream="build-tools-release" />
 
@@ -289,5 +289,5 @@
 
   <project path="prebuilts/rust-toolchain/linux-musl-x86" name="platform/prebuilts/rust-toolchain/linux-musl-x86" groups="pdk" clone-depth="1" revision="e8a902603c89167e9d8cca93e7529c631fd6df4d" upstream="build-tools-release" />
 
-  <project path="prebuilts/rust-toolchain/linux-x86" name="platform/prebuilts/rust-toolchain/linux-x86" groups="pdk" clone-depth="1" revision="0c42ec935824b93ecdbba5fd2736b590de15bf8b" upstream="build-tools-release" />
+  <project path="prebuilts/rust-toolchain/linux-x86" name="platform/prebuilts/rust-toolchain/linux-x86" groups="pdk" clone-depth="1" revision="1535695c39db472bb236de92ff65e069246a3d7d" upstream="build-tools-release" />
 </manifest>
