@@ -93,7 +93,10 @@ prebuilt_build_tool {
         },
         linux_musl_arm64: {
             src: "linux-arm64/bin/bison",
-            deps: ["linux-arm64/lib64/libc++.so"],
+            deps: [
+                "linux-arm64/lib64/libc_musl.so",
+                "linux-arm64/lib64/libc++.so",
+            ],
             enabled: true,
         },
 
@@ -116,6 +119,7 @@ prebuilt_build_tool {
         },
         musl_arm64: {
             src: "linux-arm64/bin/flex",
+            deps: ["linux-arm64/lib64/libc_musl.so"],
             enabled: true,
         },
     },
@@ -137,6 +141,7 @@ prebuilt_build_tool {
         },
         musl_arm64: {
             src: "linux-arm64/bin/m4",
+            deps: ["linux-arm64/lib64/libc_musl.so"],
             enabled: true,
         },
     },
@@ -157,6 +162,9 @@ prebuilt_build_tool {
         linux_musl_arm64: {
             src: "linux-arm64/bin/make",
             enabled: true,
+            deps: [
+                "linux-arm64/lib64/libc_musl.so",
+            ],
         },
     },
     visibility: ["//vendor:__subpackages__"],
