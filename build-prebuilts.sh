@@ -376,12 +376,24 @@ EOF
         cat > ${SOONG_OUT}/soong.variables << EOF
 {
     "Allow_missing_dependencies": true,
-    "HostArch":"x86_64",
+    ${primary_arch}
     ${secondary_arch}
+    ${cross_compile}
+    "HostMusl": $use_musl,
+    "StripByDefault": true,
+    $(release_config_json| sed '2,$s/^/    /; $s/$/,/')
     "SanitizeHost": ["address"],
     "VendorVars": {
+        "cpython3": {
+            "force_build_host": "true"
+        },
         "art_module": {
             "source_build": "true"
+        }
+    },
+    "VendorVarTypes": {
+        "cpython3": {
+            "force_build_host": "bool"
         }
     }
 }
