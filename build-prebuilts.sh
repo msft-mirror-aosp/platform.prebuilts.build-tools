@@ -209,6 +209,7 @@ EOF
         tool_event_logger
         toybox
         xz
+        yasm
         zipalign
         ziptime
         ziptool
