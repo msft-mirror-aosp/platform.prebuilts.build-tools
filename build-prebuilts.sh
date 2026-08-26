@@ -191,6 +191,7 @@ EOF
         build_sdk_bin
         bzip2
         ckati
+        diff
         edit_monitor
         flex
         gavinhoward-bc
