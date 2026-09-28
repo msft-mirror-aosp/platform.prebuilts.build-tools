@@ -287,7 +287,7 @@ EOF
     fi
 
     # Build everything
-    build/soong/soong_ui.bash --make-mode --soong-only --skip-config \
+    build/soong/soong_ui.bash --make-mode --soong-only --skip-config --dist-logs \
         --release-config-json=${SOONG_OUT}/soong_ui.release_config.json \
         ${go_binaries} \
         ${binaries} \
@@ -407,7 +407,7 @@ EOF
         rm -rf ${SOONG_HOST_OUT}
 
         # Build everything with ASAN
-        build/soong/soong_ui.bash --make-mode --soong-only --skip-config \
+        build/soong/soong_ui.bash --make-mode --soong-only --skip-config --dist-logs \
             ${asan_binaries} \
             ${SOONG_HOST_OUT}/nativetest64/ninja_test/ninja_test \
             ${SOONG_HOST_OUT}/nativetest64/ckati_find_test/ckati_find_test
