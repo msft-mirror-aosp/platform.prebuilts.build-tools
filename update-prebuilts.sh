@@ -58,6 +58,10 @@ fetch_artifact linux_musl musl-sysroot-i686-unknown-linux-musl.zip "${tmpdir}/mu
 fetch_artifact linux_musl musl-sysroot-x86_64-unknown-linux-musl.zip "${tmpdir}/musl-sysroot-x86_64-unknown-linux-musl.zip"
 fetch_artifact linux_musl musl-sysroot-aarch64-unknown-linux-musl.zip "${tmpdir}/musl-sysroot-aarch64-unknown-linux-musl.zip"
 fetch_artifact linux_musl musl-sysroot-arm-unknown-linux-musleabihf.zip "${tmpdir}/musl-sysroot-arm-unknown-linux-musleabihf.zip"
+GLIBC_TRIPLES="x86_64-unknown-linux-gnu i386-unknown-linux-gnu aarch64-unknown-linux-gnu arm-unknown-linux-gnueabihf"
+for triple in ${GLIBC_TRIPLES}; do
+    fetch_artifact linux glibc-sysroot-${triple}.zip "${tmpdir}/glibc-sysroot-${triple}.zip"
+done
 
 function unzip_to() {
     rm -rf "$1"
@@ -74,10 +78,15 @@ unzip_to sysroots/x86_64-unknown-linux-musl "${tmpdir}/musl-sysroot-x86_64-unkno
 unzip_to sysroots/i686-unknown-linux-musl "${tmpdir}/musl-sysroot-i686-unknown-linux-musl.zip"
 unzip_to sysroots/aarch64-unknown-linux-musl "${tmpdir}/musl-sysroot-aarch64-unknown-linux-musl.zip"
 unzip_to sysroots/arm-unknown-linux-musleabihf "${tmpdir}/musl-sysroot-arm-unknown-linux-musleabihf.zip"
+glibc_sysroot_dirs=""
+for triple in ${GLIBC_TRIPLES}; do
+    unzip_to sysroots/${triple} "${tmpdir}/glibc-sysroot-${triple}.zip"
+    glibc_sysroot_dirs="${glibc_sysroot_dirs} sysroots/${triple}"
+done
 
 cp -f "${tmpdir}/manifest.xml" manifest.xml
 
-git add manifest.xml linux-x86 linux-arm64 linux_musl-x86 darwin-x86 common sysroots/x86_64-unknown-linux-musl sysroots/i686-unknown-linux-musl sysroots/aarch64-unknown-linux-musl sysroots/arm-unknown-linux-musleabihf
+git add manifest.xml linux-x86 linux-arm64 linux_musl-x86 darwin-x86 common sysroots/x86_64-unknown-linux-musl sysroots/i686-unknown-linux-musl sysroots/aarch64-unknown-linux-musl sysroots/arm-unknown-linux-musleabihf ${glibc_sysroot_dirs}
 git commit -m "Update build-tools to ab/${BUILD_NUMBER}
 
 http://ab/${BUILD_NUMBER}

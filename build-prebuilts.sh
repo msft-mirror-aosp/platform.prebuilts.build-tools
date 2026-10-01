@@ -103,6 +103,14 @@ if [[ ${use_musl} = "true" && ${ARCH} = x86 ]]; then
     "CrossHostSecondaryArch": "arm",
 EOF
     )
+elif [[ ${OS} = linux && ${ARCH} = x86 ]]; then
+    # For the arm64 and arm glibc sysroots.
+    cross_compile=$(cat <<EOF
+    "CrossHost": "linux_glibc",
+    "CrossHostArch": "arm64",
+    "CrossHostSecondaryArch": "arm",
+EOF
+    )
 elif [[ ${OS} = darwin ]]; then
     cross_compile=$(cat <<EOF
     "CrossHost": "darwin",
@@ -286,6 +294,13 @@ EOF
         musl_arm64_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_arm64/gen/libc_musl_sysroot.zip"
     fi
 
+    glibc_sysroots=""
+    if [[ ${use_musl} != "true" && ${OS} = linux && ${ARCH} = x86 ]]; then
+        for arch in x86 x86_64 arm arm64; do
+            glibc_sysroots="${glibc_sysroots} ${SOONG_OUT}/.intermediates/prebuilts/glibc/libc_glibc_sysroot/linux_glibc_${arch}/gen/libc_glibc_sysroot.zip"
+        done
+    fi
+
     # Build everything
     build/soong/soong_ui.bash --make-mode --soong-only --skip-config --dist-logs \
         --release-config-json=${SOONG_OUT}/soong_ui.release_config.json \
@@ -299,6 +314,7 @@ EOF
         ${musl_x86_64_sysroot} \
         ${musl_arm_sysroot} \
         ${musl_arm64_sysroot} \
+        ${glibc_sysroots} \
         ${tests} \
         soong_docs
 
@@ -370,6 +386,14 @@ EOF
         cp ${musl_x86_sysroot} ${SOONG_OUT}/musl-sysroot-i686-unknown-linux-musl.zip
         cp ${musl_arm_sysroot} ${SOONG_OUT}/musl-sysroot-arm-unknown-linux-musleabihf.zip
         cp ${musl_arm64_sysroot} ${SOONG_OUT}/musl-sysroot-aarch64-unknown-linux-musl.zip
+    fi
+
+    if [[ -n "${glibc_sysroots}" ]]; then
+        glibc_sysroot_dir=${SOONG_OUT}/.intermediates/prebuilts/glibc/libc_glibc_sysroot
+        cp ${glibc_sysroot_dir}/linux_glibc_x86_64/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-x86_64-unknown-linux-gnu.zip
+        cp ${glibc_sysroot_dir}/linux_glibc_x86/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-i386-unknown-linux-gnu.zip
+        cp ${glibc_sysroot_dir}/linux_glibc_arm/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-arm-unknown-linux-gnueabihf.zip
+        cp ${glibc_sysroot_dir}/linux_glibc_arm64/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-aarch64-unknown-linux-gnu.zip
     fi
 
     if [[ $OS == "linux" && -n "${build_asan}" ]]; then
@@ -515,6 +539,12 @@ if [ -n "${DIST_DIR}" ]; then
             cp ${SOONG_OUT}/musl-sysroot-i686-unknown-linux-musl.zip ${DIST_DIR}/
             cp ${SOONG_OUT}/musl-sysroot-arm-unknown-linux-musleabihf.zip ${DIST_DIR}/
             cp ${SOONG_OUT}/musl-sysroot-aarch64-unknown-linux-musl.zip ${DIST_DIR}/
+        fi
+        if [[ -n "${glibc_sysroots}" ]]; then
+            cp ${SOONG_OUT}/glibc-sysroot-x86_64-unknown-linux-gnu.zip ${DIST_DIR}/
+            cp ${SOONG_OUT}/glibc-sysroot-i386-unknown-linux-gnu.zip ${DIST_DIR}/
+            cp ${SOONG_OUT}/glibc-sysroot-arm-unknown-linux-gnueabihf.zip ${DIST_DIR}/
+            cp ${SOONG_OUT}/glibc-sysroot-aarch64-unknown-linux-gnu.zip ${DIST_DIR}/
         fi
     fi
     if [ -n "${build_go}" ]; then
