@@ -108,4 +108,5 @@
 #define ENOTRECOVERABLE 131
 #define ERFKILL 132
 #define EHWPOISON 133
+#define EFTYPE 134
 #endif

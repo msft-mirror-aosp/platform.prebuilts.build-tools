@@ -199,4 +199,16 @@ struct ib_uverbs_gid_entry {
   __u32 gid_type;
   __u32 netdev_ifindex;
 };
+enum ib_uverbs_buffer_type {
+  IB_UVERBS_BUFFER_TYPE_DMABUF,
+  IB_UVERBS_BUFFER_TYPE_VA,
+};
+struct ib_uverbs_buffer_desc {
+  __u32 type;
+  __s32 fd;
+  __u32 flags;
+  __u32 optional_flags;
+  __aligned_u64 addr;
+  __aligned_u64 length;
+};
 #endif

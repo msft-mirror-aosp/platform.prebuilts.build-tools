@@ -303,7 +303,7 @@ struct btrfs_ioctl_search_args {
 struct btrfs_ioctl_search_args_v2 {
   struct btrfs_ioctl_search_key key;
   __u64 buf_size;
-  __u64 buf[];
+  __u8 buf[];
 };
 struct btrfs_ioctl_clone_range_args {
   __s64 src_fd;
@@ -517,6 +517,25 @@ enum btrfs_err_code {
   BTRFS_ERROR_DEV_RAID1C3_MIN_NOT_MET,
   BTRFS_ERROR_DEV_RAID1C4_MIN_NOT_MET,
 };
+#define BTRFS_GET_CSUMS_HAS_CSUMS (1U << 0)
+#define BTRFS_GET_CSUMS_ZEROED (1U << 1)
+#define BTRFS_GET_CSUMS_NODATASUM (1U << 2)
+#define BTRFS_GET_CSUMS_COMPRESSED (1U << 3)
+#define BTRFS_GET_CSUMS_ENCRYPTED (1U << 4)
+#define BTRFS_GET_CSUMS_INLINE (1U << 5)
+struct btrfs_ioctl_get_csums_entry {
+  __u64 offset;
+  __u64 length;
+  __u32 type;
+  __u32 reserved;
+};
+struct btrfs_ioctl_get_csums_args {
+  __u64 offset;
+  __u64 length;
+  __u64 buf_size;
+  __u64 flags;
+  __u8 buf[];
+};
 #define BTRFS_SHUTDOWN_FLAGS_DEFAULT 0x0
 #define BTRFS_SHUTDOWN_FLAGS_LOGFLUSH 0x1
 #define BTRFS_SHUTDOWN_FLAGS_NOLOGFLUSH 0x2
@@ -585,6 +604,7 @@ enum btrfs_err_code {
 #define BTRFS_IOC_ENCODED_READ _IOR(BTRFS_IOCTL_MAGIC, 64, struct btrfs_ioctl_encoded_io_args)
 #define BTRFS_IOC_ENCODED_WRITE _IOW(BTRFS_IOCTL_MAGIC, 64, struct btrfs_ioctl_encoded_io_args)
 #define BTRFS_IOC_SUBVOL_SYNC_WAIT _IOW(BTRFS_IOCTL_MAGIC, 65, struct btrfs_ioctl_subvol_wait)
+#define BTRFS_IOC_GET_CSUMS _IOWR(BTRFS_IOCTL_MAGIC, 66, struct btrfs_ioctl_get_csums_args)
 #define BTRFS_IOC_SHUTDOWN _IOR('X', 125, __u32)
 #ifdef __cplusplus
 }

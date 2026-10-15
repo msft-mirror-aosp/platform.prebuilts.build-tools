@@ -29,17 +29,10 @@ struct atm_dev_stats {
 #define ATM_GETNAMES _IOW('a', ATMIOC_ITF + 3, struct atm_iobuf)
 #define ATM_GETTYPE _IOW('a', ATMIOC_ITF + 4, struct atmif_sioc)
 #define ATM_GETESI _IOW('a', ATMIOC_ITF + 5, struct atmif_sioc)
-#define ATM_GETADDR _IOW('a', ATMIOC_ITF + 6, struct atmif_sioc)
-#define ATM_RSTADDR _IOW('a', ATMIOC_ITF + 7, struct atmif_sioc)
-#define ATM_ADDADDR _IOW('a', ATMIOC_ITF + 8, struct atmif_sioc)
-#define ATM_DELADDR _IOW('a', ATMIOC_ITF + 9, struct atmif_sioc)
 #define ATM_GETCIRANGE _IOW('a', ATMIOC_ITF + 10, struct atmif_sioc)
 #define ATM_SETCIRANGE _IOW('a', ATMIOC_ITF + 11, struct atmif_sioc)
 #define ATM_SETESI _IOW('a', ATMIOC_ITF + 12, struct atmif_sioc)
 #define ATM_SETESIF _IOW('a', ATMIOC_ITF + 13, struct atmif_sioc)
-#define ATM_ADDLECSADDR _IOW('a', ATMIOC_ITF + 14, struct atmif_sioc)
-#define ATM_DELLECSADDR _IOW('a', ATMIOC_ITF + 15, struct atmif_sioc)
-#define ATM_GETLECSADDR _IOW('a', ATMIOC_ITF + 16, struct atmif_sioc)
 #define ATM_GETSTAT _IOW('a', ATMIOC_SARCOM + 0, struct atmif_sioc)
 #define ATM_GETSTATZ _IOW('a', ATMIOC_SARCOM + 1, struct atmif_sioc)
 #define ATM_GETLOOP _IOW('a', ATMIOC_SARCOM + 2, struct atmif_sioc)
@@ -48,8 +41,6 @@ struct atm_dev_stats {
 #define ATM_SETSC _IOW('a', ATMIOC_SPECIAL + 1, int)
 #define ATM_SETBACKEND _IOW('a', ATMIOC_SPECIAL + 2, atm_backend_t)
 #define ATM_NEWBACKENDIF _IOW('a', ATMIOC_SPECIAL + 3, atm_backend_t)
-#define ATM_ADDPARTY _IOW('a', ATMIOC_SPECIAL + 4, struct atm_iobuf)
-#define ATM_DROPPARTY _IOW('a', ATMIOC_SPECIAL + 5, int)
 #define ATM_BACKEND_RAW 0
 #define ATM_BACKEND_PPP 1
 #define ATM_BACKEND_BR2684 2

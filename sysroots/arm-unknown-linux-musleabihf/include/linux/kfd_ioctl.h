@@ -9,7 +9,7 @@
 #include <drm/drm.h>
 #include <linux/ioctl.h>
 #define KFD_IOCTL_MAJOR_VERSION 1
-#define KFD_IOCTL_MINOR_VERSION 22
+#define KFD_IOCTL_MINOR_VERSION 23
 struct kfd_ioctl_get_version_args {
   __u32 major_version;
   __u32 minor_version;
@@ -685,6 +685,29 @@ struct kfd_ioctl_dbg_trap_args {
     struct kfd_ioctl_dbg_trap_device_snapshot_args device_snapshot;
   };
 };
+#define KFD_IOC_PROFILER_VERSION_NUM 1
+enum kfd_profiler_ops {
+  KFD_IOC_PROFILER_PMC = 0,
+  KFD_IOC_PROFILER_VERSION = 2,
+  KFD_IOC_PROFILER_PTL_CONTROL = 3,
+};
+struct kfd_ioctl_pmc_settings {
+  __u32 gpu_id;
+  __u32 lock;
+  __u32 perfcount_enable;
+};
+struct kfd_ioctl_ptl_control {
+  __u32 gpu_id;
+  __u32 enable;
+};
+struct kfd_ioctl_profiler_args {
+  __u32 op;
+  union {
+    struct kfd_ioctl_pmc_settings pmc;
+    struct kfd_ioctl_ptl_control ptl;
+    __u32 version;
+  };
+};
 #define AMDKFD_IOCTL_BASE 'K'
 #define AMDKFD_IO(nr) _IO(AMDKFD_IOCTL_BASE, nr)
 #define AMDKFD_IOR(nr,type) _IOR(AMDKFD_IOCTL_BASE, nr, type)
@@ -729,6 +752,7 @@ struct kfd_ioctl_dbg_trap_args {
 #define AMDKFD_IOC_RUNTIME_ENABLE AMDKFD_IOWR(0x25, struct kfd_ioctl_runtime_enable_args)
 #define AMDKFD_IOC_DBG_TRAP AMDKFD_IOWR(0x26, struct kfd_ioctl_dbg_trap_args)
 #define AMDKFD_IOC_CREATE_PROCESS AMDKFD_IO(0x27)
+#define AMDKFD_IOC_PROFILER AMDKFD_IOWR(0x28, struct kfd_ioctl_profiler_args)
 #define AMDKFD_COMMAND_START 0x01
-#define AMDKFD_COMMAND_END 0x28
+#define AMDKFD_COMMAND_END 0x29
 #endif

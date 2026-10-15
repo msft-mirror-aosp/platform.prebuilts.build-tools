@@ -48,6 +48,7 @@ enum iio_chan_type {
   IIO_CHROMATICITY,
   IIO_ATTENTION,
   IIO_ALTCURRENT,
+  IIO_COVERAGE,
 };
 enum iio_modifier {
   IIO_NO_MOD,
@@ -107,6 +108,7 @@ enum iio_modifier {
   IIO_MOD_ACTIVE,
   IIO_MOD_REACTIVE,
   IIO_MOD_APPARENT,
+  IIO_MOD_QUATERNION_AXIS,
 };
 enum iio_event_type {
   IIO_EV_TYPE_THRESH,
