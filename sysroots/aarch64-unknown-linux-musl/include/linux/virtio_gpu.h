@@ -12,6 +12,7 @@
 #define VIRTIO_GPU_F_RESOURCE_UUID 2
 #define VIRTIO_GPU_F_RESOURCE_BLOB 3
 #define VIRTIO_GPU_F_CONTEXT_INIT 4
+#define VIRTIO_GPU_F_BLOB_ALIGNMENT 5
 enum virtio_gpu_ctrl_type {
   VIRTIO_GPU_UNDEFINED = 0,
   VIRTIO_GPU_CMD_GET_DISPLAY_INFO = 0x0100,
@@ -236,6 +237,7 @@ struct virtio_gpu_config {
   __le32 events_clear;
   __le32 num_scanouts;
   __le32 num_capsets;
+  __le32 blob_alignment;
 };
 enum virtio_gpu_formats {
   VIRTIO_GPU_FORMAT_B8G8R8A8_UNORM = 1,

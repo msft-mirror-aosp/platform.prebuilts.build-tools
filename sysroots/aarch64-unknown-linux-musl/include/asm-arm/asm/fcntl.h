@@ -6,9 +6,9 @@
  */
 #ifndef _ARM_FCNTL_H
 #define _ARM_FCNTL_H
-#define O_DIRECTORY 040000
-#define O_NOFOLLOW 0100000
-#define O_DIRECT 0200000
-#define O_LARGEFILE 0400000
+#define O_DIRECTORY (1 << 14)
+#define O_NOFOLLOW (1 << 15)
+#define O_DIRECT (1 << 16)
+#define O_LARGEFILE (1 << 17)
 #include <asm-generic/fcntl.h>
 #endif

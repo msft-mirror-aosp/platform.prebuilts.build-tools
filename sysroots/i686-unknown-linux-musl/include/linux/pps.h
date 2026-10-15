@@ -8,7 +8,7 @@
 #define _PPS_H_
 #include <linux/types.h>
 #define PPS_VERSION "5.3.6"
-#define PPS_MAX_SOURCES 16
+#define PPS_MAX_SOURCES 256
 #define PPS_API_VERS_1 1
 #define PPS_API_VERS PPS_API_VERS_1
 #define PPS_MAX_NAME_LEN 32

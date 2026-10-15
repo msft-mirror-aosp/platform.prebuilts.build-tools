@@ -403,6 +403,15 @@ struct tc_netem_gemodel {
 };
 #define NETEM_DIST_SCALE 8192
 #define NETEM_DIST_MAX 16384
+struct tc_netem_xstats {
+  __u64 delayed;
+  __u64 dropped;
+  __u64 corrupted;
+  __u64 duplicated;
+  __u64 reordered;
+  __u64 ecn_marked;
+  __u64 allocation_errors;
+};
 enum {
   TCA_DRR_UNSPEC,
   TCA_DRR_QUANTUM,

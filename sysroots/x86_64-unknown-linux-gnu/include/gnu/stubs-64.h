@@ -1,0 +1,1 @@
+/* No functions are stubs. */
