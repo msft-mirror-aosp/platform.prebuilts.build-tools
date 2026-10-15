@@ -24,6 +24,15 @@ struct io_uring_bpf_ctx {
       __u64 mode;
       __u64 resolve;
     } open;
+    struct {
+      __u32 family;
+      __be16 port;
+      __u8 pad[2];
+      union {
+        __be32 v4_addr;
+        __u8 v6_addr[16];
+      };
+    } connect;
   };
 };
 enum {

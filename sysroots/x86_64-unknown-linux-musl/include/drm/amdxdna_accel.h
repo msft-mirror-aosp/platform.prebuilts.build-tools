@@ -16,13 +16,16 @@ extern "C" {
 #define AMDXDNA_INVALID_CTX_HANDLE 0
 #define AMDXDNA_INVALID_BO_HANDLE 0
 #define AMDXDNA_INVALID_FENCE_HANDLE 0
+#define AMDXDNA_INVALID_DOORBELL_OFFSET (~0U)
 #define AMDXDNA_QOS_REALTIME_PRIORITY 0x100
 #define AMDXDNA_QOS_HIGH_PRIORITY 0x180
 #define AMDXDNA_QOS_NORMAL_PRIORITY 0x200
 #define AMDXDNA_QOS_LOW_PRIORITY 0x280
 enum amdxdna_device_type {
   AMDXDNA_DEV_TYPE_UNKNOWN = - 1,
-  AMDXDNA_DEV_TYPE_KMQ,
+  AMDXDNA_DEV_TYPE_KMQ = 0,
+  AMDXDNA_DEV_TYPE_UMQ = 1,
+  AMDXDNA_DEV_TYPE_PF = 2,
 };
 enum amdxdna_drm_ioctl_id {
   DRM_AMDXDNA_CREATE_HWCTX,
@@ -34,7 +37,8 @@ enum amdxdna_drm_ioctl_id {
   DRM_AMDXDNA_EXEC_CMD,
   DRM_AMDXDNA_GET_INFO,
   DRM_AMDXDNA_SET_STATE,
-  DRM_AMDXDNA_GET_ARRAY = 10,
+  DRM_AMDXDNA_WAIT_CMD,
+  DRM_AMDXDNA_GET_ARRAY,
 };
 struct amdxdna_qos_info {
   __u32 gops;
@@ -138,6 +142,11 @@ struct amdxdna_drm_exec_cmd {
   __u64 args;
   __u32 cmd_count;
   __u32 arg_count;
+  __u64 seq;
+};
+struct amdxdna_drm_wait_cmd {
+  __u32 hwctx;
+  __u32 timeout;
   __u64 seq;
 };
 struct amdxdna_drm_query_aie_status {
@@ -335,6 +344,7 @@ struct amdxdna_drm_set_power_mode {
 #define DRM_IOCTL_AMDXDNA_GET_INFO DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_INFO, struct amdxdna_drm_get_info)
 #define DRM_IOCTL_AMDXDNA_SET_STATE DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_SET_STATE, struct amdxdna_drm_set_state)
 #define DRM_IOCTL_AMDXDNA_GET_ARRAY DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_ARRAY, struct amdxdna_drm_get_array)
+#define DRM_IOCTL_AMDXDNA_WAIT_CMD DRM_IOW(DRM_COMMAND_BASE + DRM_AMDXDNA_WAIT_CMD, struct amdxdna_drm_wait_cmd)
 #ifdef __cplusplus
 }
 #endif

@@ -98,6 +98,7 @@ extern "C" {
 #define DRM_FORMAT_XVUY8888 fourcc_code('X', 'V', 'U', 'Y')
 #define DRM_FORMAT_VUY888 fourcc_code('V', 'U', '2', '4')
 #define DRM_FORMAT_VUY101010 fourcc_code('V', 'U', '3', '0')
+#define DRM_FORMAT_XVUY2101010 fourcc_code('X', 'Y', '3', '0')
 #define DRM_FORMAT_Y210 fourcc_code('Y', '2', '1', '0')
 #define DRM_FORMAT_Y212 fourcc_code('Y', '2', '1', '2')
 #define DRM_FORMAT_Y216 fourcc_code('Y', '2', '1', '6')
@@ -135,8 +136,10 @@ extern "C" {
 #define DRM_FORMAT_P012 fourcc_code('P', '0', '1', '2')
 #define DRM_FORMAT_P016 fourcc_code('P', '0', '1', '6')
 #define DRM_FORMAT_P030 fourcc_code('P', '0', '3', '0')
+#define DRM_FORMAT_P230 fourcc_code('P', '2', '3', '0')
 #define DRM_FORMAT_Q410 fourcc_code('Q', '4', '1', '0')
 #define DRM_FORMAT_Q401 fourcc_code('Q', '4', '0', '1')
+#define DRM_FORMAT_T430 fourcc_code('T', '4', '3', '0')
 #define DRM_FORMAT_S010 fourcc_code('S', '0', '1', '0')
 #define DRM_FORMAT_S210 fourcc_code('S', '2', '1', '0')
 #define DRM_FORMAT_S410 fourcc_code('S', '4', '1', '0')
@@ -156,6 +159,8 @@ extern "C" {
 #define DRM_FORMAT_YVU422 fourcc_code('Y', 'V', '1', '6')
 #define DRM_FORMAT_YUV444 fourcc_code('Y', 'U', '2', '4')
 #define DRM_FORMAT_YVU444 fourcc_code('Y', 'V', '2', '4')
+#define DRM_FORMAT_Y8 fourcc_code('G', 'R', 'E', 'Y')
+#define DRM_FORMAT_XYYY2101010 fourcc_code('Y', 'P', 'A', '4')
 #define DRM_FORMAT_MOD_VENDOR_NONE 0
 #define DRM_FORMAT_MOD_VENDOR_INTEL 0x01
 #define DRM_FORMAT_MOD_VENDOR_AMD 0x02

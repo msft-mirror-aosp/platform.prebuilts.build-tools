@@ -12,6 +12,7 @@ struct open_how {
   __u64 mode;
   __u64 resolve;
 };
+#define OPENAT2_REGULAR ((__u64) 1 << 32)
 #define RESOLVE_NO_XDEV 0x01
 #define RESOLVE_NO_MAGICLINKS 0x02
 #define RESOLVE_NO_SYMLINKS 0x04

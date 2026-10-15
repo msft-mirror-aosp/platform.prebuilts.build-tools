@@ -20,6 +20,7 @@ enum {
   LIVEUPDATE_CMD_SESSION_PRESERVE_FD = LIVEUPDATE_CMD_SESSION_BASE,
   LIVEUPDATE_CMD_SESSION_RETRIEVE_FD = 0x41,
   LIVEUPDATE_CMD_SESSION_FINISH = 0x42,
+  LIVEUPDATE_CMD_SESSION_GET_NAME = 0x43,
 };
 struct liveupdate_ioctl_create_session {
   __u32 size;
@@ -50,4 +51,10 @@ struct liveupdate_session_finish {
   __u32 reserved;
 };
 #define LIVEUPDATE_SESSION_FINISH _IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_FINISH)
+struct liveupdate_session_get_name {
+  __u32 size;
+  __u32 reserved;
+  __u8 name[LIVEUPDATE_SESSION_NAME_LENGTH];
+};
+#define LIVEUPDATE_SESSION_GET_NAME _IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_GET_NAME)
 #endif

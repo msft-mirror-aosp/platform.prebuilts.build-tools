@@ -226,6 +226,23 @@ struct drm_msm_submitqueue_query {
   __u32 len;
   __u32 pad;
 };
+#define MSM_PERFCNTR_STREAM 0x00000001
+#define MSM_PERFCNTR_UPDATE 0x00000002
+#define MSM_PERFCNTR_FLAGS (MSM_PERFCNTR_STREAM | MSM_PERFCNTR_UPDATE | 0)
+struct drm_msm_perfcntr_group {
+  char group_name[16];
+  __u32 nr_countables;
+  __u32 pad;
+  __u64 countables;
+};
+struct drm_msm_perfcntr_config {
+  __u32 flags;
+  __u32 nr_groups;
+  __u64 groups;
+  __u64 period;
+  __u32 bufsz_shift;
+  __u32 group_stride;
+};
 #define DRM_MSM_GET_PARAM 0x00
 #define DRM_MSM_SET_PARAM 0x01
 #define DRM_MSM_GEM_NEW 0x02
@@ -239,6 +256,7 @@ struct drm_msm_submitqueue_query {
 #define DRM_MSM_SUBMITQUEUE_CLOSE 0x0B
 #define DRM_MSM_SUBMITQUEUE_QUERY 0x0C
 #define DRM_MSM_VM_BIND 0x0D
+#define DRM_MSM_PERFCNTR_CONFIG 0x0E
 #define DRM_IOCTL_MSM_GET_PARAM DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GET_PARAM, struct drm_msm_param)
 #define DRM_IOCTL_MSM_SET_PARAM DRM_IOW(DRM_COMMAND_BASE + DRM_MSM_SET_PARAM, struct drm_msm_param)
 #define DRM_IOCTL_MSM_GEM_NEW DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_GEM_NEW, struct drm_msm_gem_new)
@@ -252,6 +270,7 @@ struct drm_msm_submitqueue_query {
 #define DRM_IOCTL_MSM_SUBMITQUEUE_CLOSE DRM_IOW(DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_CLOSE, __u32)
 #define DRM_IOCTL_MSM_SUBMITQUEUE_QUERY DRM_IOW(DRM_COMMAND_BASE + DRM_MSM_SUBMITQUEUE_QUERY, struct drm_msm_submitqueue_query)
 #define DRM_IOCTL_MSM_VM_BIND DRM_IOWR(DRM_COMMAND_BASE + DRM_MSM_VM_BIND, struct drm_msm_vm_bind)
+#define DRM_IOCTL_MSM_PERFCNTR_CONFIG DRM_IOW(DRM_COMMAND_BASE + DRM_MSM_PERFCNTR_CONFIG, struct drm_msm_perfcntr_config)
 #ifdef __cplusplus
 }
 #endif
