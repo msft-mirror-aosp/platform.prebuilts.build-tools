@@ -14,39 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ -z $1 ]; then
-    echo "usage: $0 <build number>"
-    echo
-    echo "The build number should be from a *snap* [not a buildkick] of git_main-build-tools-release."
-    echo "https://android-build.googleplex.com/coastguard/branch/git_main-build-tools-release/#/request/"
-    echo
-    echo "Don't forget to repo start first!"
-    exit 1
-fi
-
-readonly BUILD_NUMBER=$1
-
 cd "$(dirname $0)"
 
-if ! git diff HEAD --quiet; then
-    echo "must be run with a clean prebuilts/build-tools project"
-    exit 1
-fi
-
-readonly tmpdir=$(mktemp -d)
-
-function finish {
-    if [ ! -z "${tmpdir}" ]; then
-        rm -rf "${tmpdir}"
-    fi
-}
-trap finish EXIT
-
-function fetch_artifact() {
-    # Include the -branch argument to fetch_artifact to enforce that the
-    # prebuilts come from the release branch and not the dev branch.
-    /google/data/ro/projects/android/fetch_artifact --branch git_main-build-tools-release --bid ${BUILD_NUMBER} --target $1 "$2" "$3"
-}
+. ./update-common.sh
 
 fetch_artifact linux build-prebuilts.zip "${tmpdir}/linux.zip"
 fetch_artifact linux build-common-prebuilts.zip "${tmpdir}/common.zip"
@@ -54,39 +24,17 @@ fetch_artifact linux manifest_${BUILD_NUMBER}.xml "${tmpdir}/manifest.xml"
 fetch_artifact darwin_mac build-prebuilts.zip "${tmpdir}/darwin.zip"
 fetch_artifact linux_musl build-prebuilts.zip "${tmpdir}/linux_musl.zip"
 fetch_artifact linux_musl build-arm64-prebuilts.zip "${tmpdir}/linux_arm64.zip"
-fetch_artifact linux_musl musl-sysroot-i686-unknown-linux-musl.zip "${tmpdir}/musl-sysroot-i686-unknown-linux-musl.zip"
-fetch_artifact linux_musl musl-sysroot-x86_64-unknown-linux-musl.zip "${tmpdir}/musl-sysroot-x86_64-unknown-linux-musl.zip"
-fetch_artifact linux_musl musl-sysroot-aarch64-unknown-linux-musl.zip "${tmpdir}/musl-sysroot-aarch64-unknown-linux-musl.zip"
-fetch_artifact linux_musl musl-sysroot-arm-unknown-linux-musleabihf.zip "${tmpdir}/musl-sysroot-arm-unknown-linux-musleabihf.zip"
-GLIBC_TRIPLES="x86_64-unknown-linux-gnu i386-unknown-linux-gnu aarch64-unknown-linux-gnu arm-unknown-linux-gnueabihf"
-for triple in ${GLIBC_TRIPLES}; do
-    fetch_artifact linux glibc-sysroot-${triple}.zip "${tmpdir}/glibc-sysroot-${triple}.zip"
-done
-
-function unzip_to() {
-    rm -rf "$1"
-    mkdir "$1"
-    unzip -q -DD -d "$1" "$2"
-}
 
 unzip_to linux-x86 "${tmpdir}/linux.zip"
 unzip_to common "${tmpdir}/common.zip"
 unzip_to darwin-x86 "${tmpdir}/darwin.zip"
 unzip_to linux_musl-x86 "${tmpdir}/linux_musl.zip"
 unzip_to linux-arm64 "${tmpdir}/linux_arm64.zip"
-unzip_to sysroots/x86_64-unknown-linux-musl "${tmpdir}/musl-sysroot-x86_64-unknown-linux-musl.zip"
-unzip_to sysroots/i686-unknown-linux-musl "${tmpdir}/musl-sysroot-i686-unknown-linux-musl.zip"
-unzip_to sysroots/aarch64-unknown-linux-musl "${tmpdir}/musl-sysroot-aarch64-unknown-linux-musl.zip"
-unzip_to sysroots/arm-unknown-linux-musleabihf "${tmpdir}/musl-sysroot-arm-unknown-linux-musleabihf.zip"
-glibc_sysroot_dirs=""
-for triple in ${GLIBC_TRIPLES}; do
-    unzip_to sysroots/${triple} "${tmpdir}/glibc-sysroot-${triple}.zip"
-    glibc_sysroot_dirs="${glibc_sysroot_dirs} sysroots/${triple}"
-done
 
 cp -f "${tmpdir}/manifest.xml" manifest.xml
 
-git add manifest.xml linux-x86 linux-arm64 linux_musl-x86 darwin-x86 common sysroots/x86_64-unknown-linux-musl sysroots/i686-unknown-linux-musl sysroots/aarch64-unknown-linux-musl sysroots/arm-unknown-linux-musleabihf ${glibc_sysroot_dirs}
+git add manifest.xml linux-x86 linux-arm64 linux_musl-x86 darwin-x86 common
+
 git commit -m "Update build-tools to ab/${BUILD_NUMBER}
 
 http://ab/${BUILD_NUMBER}
