@@ -26,9 +26,12 @@ struct btf_header {
   __u32 layout_off;
   __u32 layout_len;
 };
-#define BTF_MAX_TYPE 0x000fffff
-#define BTF_MAX_NAME_OFFSET 0x00ffffff
-#define BTF_MAX_VLEN 0xffff
+enum btf_max {
+  BTF_MAX_KIND = 0x0000007f,
+  BTF_MAX_TYPE = 0x000fffff,
+  BTF_MAX_NAME_OFFSET = 0x00ffffff,
+  BTF_MAX_VLEN = 0x00ffffff,
+};
 struct btf_type {
   __u32 name_off;
   __u32 info;
@@ -37,8 +40,8 @@ struct btf_type {
     __u32 type;
   };
 };
-#define BTF_INFO_KIND(info) (((info) >> 24) & 0x1f)
-#define BTF_INFO_VLEN(info) ((info) & 0xffff)
+#define BTF_INFO_KIND(info) (((info) >> 24) & 0x7f)
+#define BTF_INFO_VLEN(info) ((info) & 0xffffff)
 #define BTF_INFO_KFLAG(info) ((info) >> 31)
 enum {
   BTF_KIND_UNKN = 0,

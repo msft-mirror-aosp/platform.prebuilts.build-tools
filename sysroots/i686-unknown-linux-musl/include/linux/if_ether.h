@@ -53,6 +53,7 @@
 #define ETH_P_PPP_DISC 0x8863
 #define ETH_P_PPP_SES 0x8864
 #define ETH_P_LINK_CTL 0x886c
+#define ETH_P_8021AC 0x8870
 #define ETH_P_ATMFATE 0x8884
 #define ETH_P_PAE 0x888E
 #define ETH_P_PROFINET 0x8892
@@ -90,6 +91,7 @@
 #define ETH_P_DSA_A5PSW 0xE001
 #define ETH_P_IFE 0xED3E
 #define ETH_P_AF_IUCV 0xFBFB
+#define ETH_P_NXP_NETC 0xFD3A
 #define ETH_P_802_3_MIN 0x0600
 #define ETH_P_802_3 0x0001
 #define ETH_P_AX25 0x0002
@@ -119,6 +121,7 @@
 #define ETH_P_XDSA 0x00F8
 #define ETH_P_MAP 0x00F9
 #define ETH_P_MCTP 0x00FA
+#define ETH_P_GRE_OSI 0x00FE
 #ifndef __UAPI_DEF_ETHHDR
 #define __UAPI_DEF_ETHHDR 1
 #endif

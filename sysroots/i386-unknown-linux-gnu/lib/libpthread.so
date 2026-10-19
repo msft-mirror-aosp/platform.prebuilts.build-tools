@@ -1,0 +1,1 @@
+GROUP ( libpthread.so.0 libc_nonshared.a )
