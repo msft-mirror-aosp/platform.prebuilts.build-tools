@@ -67,7 +67,7 @@ while getopts ":-:" opt; do
         -)
             case "${OPTARG}" in
                 resume) clean= ;;
-                musl) use_musl=true; build_arm64_cross_musl=1; build_arm64_bootstrap_go=1 ;;
+                musl) use_musl=true; build_arm64_bootstrap_go=1 ;;
                 skip-go) unset build_go ;;
                 skip-soong) unset build_soong ;;
                 skip-soong-tests) ;;
@@ -81,13 +81,14 @@ done
 primary_arch=""
 if [[ ${ARCH} = x86 ]]; then
     primary_arch="\"HostArch\":\"x86_64\","
+    sysroot_archs="x86_64 x86 arm64 arm"
 elif [[ ${ARCH} = arm64 ]]; then
     primary_arch="\"HostArch\":\"arm64\","
+    sysroot_archs="arm64 arm"
     use_musl=true
     unset build_native
     unset build_java
     unset build_asan
-    unset build_arm64_cross_musl
 fi
 
 secondary_arch=""
@@ -97,6 +98,7 @@ fi
 
 cross_compile=""
 if [[ ${use_musl} = "true" && ${ARCH} = x86 ]]; then
+    build_arm64_cross_musl=1
     cross_compile=$(cat <<EOF
     "CrossHost": "linux_musl",
     "CrossHostArch": "arm64",
@@ -104,7 +106,7 @@ if [[ ${use_musl} = "true" && ${ARCH} = x86 ]]; then
 EOF
     )
 elif [[ ${OS} = linux && ${ARCH} = x86 ]]; then
-    # For the arm64 and arm glibc sysroots.
+    build_arm64_cross_glibc=1
     cross_compile=$(cat <<EOF
     "CrossHost": "linux_glibc",
     "CrossHostArch": "arm64",
@@ -274,24 +276,12 @@ EOF
         wrappers="${SOONG_JAVA_WRAPPERS[@]/#/${SOONG_HOST_OUT}/bin/}"
     fi
 
-    musl_x86_sysroot=""
-    musl_x86_64_sysroot=""
-    musl_arm_sysroot=""
-    musl_arm64_sysroot=""
-    cross_binaries=""
-    if [[ ${use_musl} = "true" && -n "${build_arm64_cross_musl}" ]]; then
+    musl_sysroots=""
+    if [[ "${use_musl}" = "true" ]]; then
         binaries="${binaries} ${SOONG_MUSL_BINARIES[@]/#/${SOONG_HOST_OUT}/bin/}"
-        musl_x86_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_x86/gen/libc_musl_sysroot.zip"
-        musl_x86_64_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_x86_64/gen/libc_musl_sysroot.zip"
-
-        # Build cross-compiled musl arm64 binaries, except for go binaries
-        # since Blueprint doesn't have cross compilation support for them.
-        SOONG_HOST_ARM_OUT=${OUT_DIR}/host/linux-arm64
-        cross_binaries="${SOONG_BINARIES[@]/#/${SOONG_HOST_ARM_OUT}/bin/}"
-        cross_binaries="${cross_binaries} ${SOONG_MUSL_BINARIES[@]/#/${SOONG_HOST_ARM_OUT}/bin/}"
-
-        musl_arm_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_arm/gen/libc_musl_sysroot.zip"
-        musl_arm64_sysroot="${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_arm64/gen/libc_musl_sysroot.zip"
+        for arch in ${sysroot_archs}; do
+            musl_sysroots="${musl_sysroots} ${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot/linux_musl_${arch}/gen/libc_musl_sysroot.zip"
+        done
     fi
 
     glibc_sysroots=""
@@ -299,6 +289,15 @@ EOF
         for arch in x86 x86_64 arm arm64; do
             glibc_sysroots="${glibc_sysroots} ${SOONG_OUT}/.intermediates/prebuilts/glibc/libc_glibc_sysroot/linux_glibc_${arch}/gen/libc_glibc_sysroot.zip"
         done
+    fi
+
+    cross_binaries=""
+    if [[ -n "${build_arm64_cross_glibc}" || -n "${build_arm64_cross_musl}" ]]; then
+        # Build cross-compiled arm64 binaries, except for go binaries
+        # since Blueprint doesn't have cross compilation support for them.
+        SOONG_HOST_ARM_OUT=${OUT_DIR}/host/linux-arm64
+        cross_binaries="${SOONG_BINARIES[@]/#/${SOONG_HOST_ARM_OUT}/bin/}"
+        cross_binaries="${cross_binaries} ${SOONG_MUSL_BINARIES[@]/#/${SOONG_HOST_ARM_OUT}/bin/}"
     fi
 
     # Build everything
@@ -310,11 +309,8 @@ EOF
         ${wrappers} \
         ${jars} \
         ${py3_stdlib_zip} \
-        ${musl_x86_sysroot} \
-        ${musl_x86_64_sysroot} \
-        ${musl_arm_sysroot} \
-        ${musl_arm64_sysroot} \
         ${glibc_sysroots} \
+        ${musl_sysroots} \
         ${tests} \
         soong_docs
 
@@ -344,7 +340,7 @@ EOF
     done
 
     # Copy cross-compiled binaries
-    if [[ "${use_musl}" = "true" && -n "${build_arm64_cross_musl}" ]]; then
+    if [[ -n "${build_arm64_cross_glibc}" || -n "${build_arm64_cross_musl}" ]]; then
         mkdir -p ${SOONG_OUT}/dist-arm64/bin
         cp ${cross_binaries} ${SOONG_OUT}/dist-arm64/bin/
         cp -R ${SOONG_HOST_ARM_OUT}/lib* ${SOONG_OUT}/dist-arm64/
@@ -381,19 +377,29 @@ EOF
         cp external/python/cpython3/LICENSE ${SOONG_OUT}/dist-common/py3-headers/
     fi
 
-    if [[ "${use_musl}" = "true" && -n "${build_arm64_cross_musl}" ]]; then
-        cp ${musl_x86_64_sysroot} ${SOONG_OUT}/musl-sysroot-x86_64-unknown-linux-musl.zip
-        cp ${musl_x86_sysroot} ${SOONG_OUT}/musl-sysroot-i686-unknown-linux-musl.zip
-        cp ${musl_arm_sysroot} ${SOONG_OUT}/musl-sysroot-arm-unknown-linux-musleabihf.zip
-        cp ${musl_arm64_sysroot} ${SOONG_OUT}/musl-sysroot-aarch64-unknown-linux-musl.zip
+    function os_arch_to_triple() {
+        case $2 in
+            arm) echo arm-unknown-linux-$1eabihf ;;
+            arm64) echo aarch64-unknown-linux-$1 ;;
+            x86) echo i386-unknown-linux-$1 ;;
+            *) echo ${arch}-unknown-linux-$1
+        esac
+    }
+
+    if [[ "${musl_sysroots}" ]]; then
+        musl_sysroot_dir=${SOONG_OUT}/.intermediates/external/musl/libc_musl_sysroot
+        for arch in ${sysroot_archs}; do
+            triple=$(os_arch_to_triple musl ${arch})
+            cp ${musl_sysroot_dir}/linux_musl_${arch}/gen/libc_musl_sysroot.zip ${SOONG_OUT}/musl-sysroot-${triple}.zip
+        done
     fi
 
-    if [[ -n "${glibc_sysroots}" ]]; then
+    if [[ "${glibc_sysroots}" ]]; then
         glibc_sysroot_dir=${SOONG_OUT}/.intermediates/prebuilts/glibc/libc_glibc_sysroot
-        cp ${glibc_sysroot_dir}/linux_glibc_x86_64/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-x86_64-unknown-linux-gnu.zip
-        cp ${glibc_sysroot_dir}/linux_glibc_x86/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-i386-unknown-linux-gnu.zip
-        cp ${glibc_sysroot_dir}/linux_glibc_arm/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-arm-unknown-linux-gnueabihf.zip
-        cp ${glibc_sysroot_dir}/linux_glibc_arm64/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-aarch64-unknown-linux-gnu.zip
+        for arch in ${sysroot_archs}; do
+            triple=$(os_arch_to_triple gnu ${arch})
+            cp ${glibc_sysroot_dir}/linux_glibc_${arch}/gen/libc_glibc_sysroot.zip ${SOONG_OUT}/glibc-sysroot-${triple}.zip
+        done
     fi
 
     if [[ $OS == "linux" && -n "${build_asan}" ]]; then
@@ -451,7 +457,7 @@ EOF
     # Package arch-specific prebuilts
     ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-prebuilts.zip -C ${SOONG_OUT}/dist -D ${SOONG_OUT}/dist
 
-    if [[ ${use_musl} = "true" && -n "${build_arm64_cross_musl}" ]]; then
+    if [[ -n "${build_arm64_cross_glibc}" || -n "${build_arm64_cross_musl}" ]]; then
         # Package cross-compiled prebuilts
         ${SOONG_OUT}/dist/bin/soong_zip -o ${OUT_DIR}/build-arm64-prebuilts.zip -C ${SOONG_OUT}/dist-arm64 -D ${SOONG_OUT}/dist-arm64
     fi
@@ -532,19 +538,20 @@ if [ -n "${DIST_DIR}" ]; then
             cp ${OUT_DIR}/build-common-prebuilts.zip ${DIST_DIR}/
         fi
         cp ${SOONG_OUT}/docs/*.html ${DIST_DIR}/
-        if [[ ${use_musl} = "true" && -n "${build_arm64_cross_musl}" ]]; then
+        if [[ -n "${build_arm64_cross_glibc}" || -n "${build_arm64_cross_musl}" ]]; then
             cp ${OUT_DIR}/build-arm64-prebuilts.zip ${DIST_DIR}/
-
-            cp ${SOONG_OUT}/musl-sysroot-x86_64-unknown-linux-musl.zip ${DIST_DIR}/
-            cp ${SOONG_OUT}/musl-sysroot-i686-unknown-linux-musl.zip ${DIST_DIR}/
-            cp ${SOONG_OUT}/musl-sysroot-arm-unknown-linux-musleabihf.zip ${DIST_DIR}/
-            cp ${SOONG_OUT}/musl-sysroot-aarch64-unknown-linux-musl.zip ${DIST_DIR}/
+        fi
+        if [[ -n "${musl_sysroots}" ]]; then
+            for arch in ${sysroot_archs}; do
+                triple=$(os_arch_to_triple musl ${arch})
+                cp ${SOONG_OUT}/musl-sysroot-${triple}.zip ${DIST_DIR}/
+            done
         fi
         if [[ -n "${glibc_sysroots}" ]]; then
-            cp ${SOONG_OUT}/glibc-sysroot-x86_64-unknown-linux-gnu.zip ${DIST_DIR}/
-            cp ${SOONG_OUT}/glibc-sysroot-i386-unknown-linux-gnu.zip ${DIST_DIR}/
-            cp ${SOONG_OUT}/glibc-sysroot-arm-unknown-linux-gnueabihf.zip ${DIST_DIR}/
-            cp ${SOONG_OUT}/glibc-sysroot-aarch64-unknown-linux-gnu.zip ${DIST_DIR}/
+            for arch in ${sysroot_archs}; do
+                triple=$(os_arch_to_triple gnu ${arch})
+                cp ${SOONG_OUT}/glibc-sysroot-${triple}.zip ${DIST_DIR}/
+            done
         fi
     fi
     if [ -n "${build_go}" ]; then
